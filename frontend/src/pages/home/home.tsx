@@ -1,12 +1,12 @@
 import React from "react";
-import {Text, View} from 'react-native';
-import { style} from "./styles";
+import { Text, View } from 'react-native';
+import { style } from "./styles";
 import { Button } from "../../components/Button/button";
-import { useNavigation, NavigationProp} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import ItemComponent from "../../components/CardHome/cardHome";
 
-
-export default function Home(){
+export default function Home() {
+    const navigation = useNavigation();
 
     const exampleItem = {
         id: '1',
@@ -14,11 +14,13 @@ export default function Home(){
         rightText: 'Details',
     };
 
+    const handleNovoCadastro = () => {
+        navigation.navigate('Cadastro');
+    };
+    
 
-    return(
-
+    return (
         <View style={style.container}>
-
             <View style={style.boxTop} >
             <Text style={style.text}>Pontos de Monitoramento</Text>
             <ItemComponent item={exampleItem} onPress={function (): void {
@@ -26,16 +28,9 @@ export default function Home(){
                 } }/>
             </View>
 
-            <View style={style.boxMid} >
-
-                <Button text={"Novo Cadastro"}/>
-
+            <View style={style.boxMid}>
+                <Button text={"Novo Cadastro"} onPress={handleNovoCadastro} />
             </View>
-
-
-
         </View>
-
-        
-    )
+    );
 }

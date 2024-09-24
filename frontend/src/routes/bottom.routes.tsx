@@ -1,6 +1,7 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Home from "../pages/home/home";
 import CustomTabBar from "../components/CustomTabBar";
+import Cadastro from "../components/Cadastro/cadastro";
 import Dashboard from "../pages/dashboard/dashboard";
 import { View, Text} from "react-native";
 import { style } from "./styles";
@@ -19,6 +20,7 @@ export default function BottomRoutes() {
             <Tab.Navigator screenOptions={{ headerShown: false }} tabBar={props => <CustomTabBar {...props} />}>
                 <Tab.Screen name="Home" component={Home} />
                 <Tab.Screen name="Dashboard" component={Dashboard} />
+                <Tab.Screen name="Cadastro" component={Cadastro} />
             </Tab.Navigator>
         </View>
         </View>
