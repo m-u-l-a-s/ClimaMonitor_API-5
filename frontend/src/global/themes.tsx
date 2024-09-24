@@ -5,6 +5,8 @@ export const themas = {
         btnAzul: '#9BC3EB',
         branco: '#ffffff',
         tabs: '#C3EB9B',
+        fundoCards: '#EAF8E9',
+        bordaCards:'#326B20'
     }
     
 }
