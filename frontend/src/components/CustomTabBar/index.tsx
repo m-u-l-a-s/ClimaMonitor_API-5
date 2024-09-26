@@ -17,7 +17,7 @@ type Props = {
     return(
           <View style={style.tabArea}>
 
-            <TouchableOpacity onPress={()=>go('Dashboard')}>
+            <TouchableOpacity onPress={()=>go('Home')}>
                 <SimpleLineIcons name="home" style={{fontSize:32}} />
             </TouchableOpacity>
 
