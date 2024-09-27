@@ -1,7 +1,7 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Home from "../pages/home/home";
 import CustomTabBar from "../components/CustomTabBar";
-import Cadastro from "../components/Cadastro/cadastro";
+import Cadastro from "../pages/cadastro/cadastro";
 import Dashboard from "../pages/dashboard/dashboard";
 import { View, Text} from "react-native";
 import { style } from "./styles";

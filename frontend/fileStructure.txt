@@ -25,6 +25,7 @@ frontend/
 ┃ ┃ ┣ dashboard/
 ┃ ┃ ┣ home/
 ┃ ┃ ┗ login/
+┃ ┃ ┗ cadastro/
 ┃ ┗ routes/
 ┃   ┣ bottom.routes.tsx
 ┃   ┣ index.routes.tsx
