@@ -8,10 +8,11 @@ export const style = StyleSheet.create({
         height: 60,
         alignItems: "center",
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         backgroundColor: themas.colors.fundoCards,
         borderColor: themas.colors.bordaCards,
         borderRadius:5,
+        marginBottom:15,
         shadowColor: "#000",
         shadowOffset: {
             width: 0,

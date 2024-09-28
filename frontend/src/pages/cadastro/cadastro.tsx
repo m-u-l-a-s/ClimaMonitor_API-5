@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, Button, StyleSheet, Alert, ScrollView } from "react-native";
 import { Picker } from '@react-native-picker/picker';
-import { CulturaDto } from '../../@types/culturaDto';
+import { CulturaDto2 } from '../../@types/culturaDto2';
 
 const Cadastro = () => {
     const [latitude, setLatitude] = useState("");
@@ -21,7 +21,7 @@ const Cadastro = () => {
             return;
         }
     
-        const data: CulturaDto = {
+        const data: CulturaDto2 = {
             latitude,
             longitude,
             cultivoType,
@@ -34,12 +34,15 @@ const Cadastro = () => {
         };
     
         try {
-            const response = await fetch('http://192.168.56.1:3000/cultura', {
+            console.log(latitude)
+            const response = await fetch('http://192.168.15.9:3000/cultura', {
+                
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(data),
+               
             });
     
             if (response.ok) {
@@ -47,6 +50,7 @@ const Cadastro = () => {
                 Alert.alert("Success", `Cadastro submitted for point at Latitude: ${result.latitude}, Longitude: ${result.longitude}`);
             } else {
                 const error = await response.json();
+                console.log(response)
                 console.error('Error response:', error); // Log the error response
                 Alert.alert("Error", error.message || "Failed to submit the form");
             }
@@ -91,14 +95,15 @@ const Cadastro = () => {
             <Text style={styles.alertsHeader}>Alertas</Text>
             
             <Text style={styles.label}>Frequência de Análise de Temperatura</Text>
-            <Picker
+            <Text style={styles.label}>Diariamente</Text>
+            {/* <Picker
                 selectedValue={tempFrequency}
                 style={styles.picker}
                 onValueChange={(itemValue) => setTempFrequency(itemValue)}
             >
                 <Picker.Item label="Diariamente" value="diariamente" />
                 <Picker.Item label="Semanalmente" value="semanalmente" />
-            </Picker>
+            </Picker> */}
 
             <Text style={styles.label}>Temperatura Máxima</Text>
             <TextInput
@@ -119,14 +124,15 @@ const Cadastro = () => {
             />
 
             <Text style={styles.label}>Frequência de Análise de Pluviometria</Text>
-            <Picker
+            <Text style={styles.label}>Diariamente</Text>
+            {/* <Picker
                 selectedValue={pluviFrequency}
                 style={styles.picker}
                 onValueChange={(itemValue) => setPluviFrequency(itemValue)}
             >
                 <Picker.Item label="Diariamente" value="diariamente" />
                 <Picker.Item label="Semanalmente" value="semanalmente" />
-            </Picker>
+            </Picker> */}
 
             <Text style={styles.label}>Pluviometria Máxima (mm)</Text>
             <TextInput

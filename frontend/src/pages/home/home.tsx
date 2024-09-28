@@ -34,9 +34,12 @@ export default function Home() {
         try {
             const response = await fetch("http://192.168.15.9:3000/cultura");
             if (response.ok) {
+                // const data: CulturaDto[] = await response.json();
+                // setCulturas(data);
+                // console.log( JSON.stringify(data));
                 const data: CulturaDto[] = await response.json();
                 setCulturas(data);
-                console.log( JSON.stringify(data));
+                console.log(data);
             } else {
                 console.error("Erro ao obter as culturas else:", response.statusText);
             }
@@ -67,8 +70,8 @@ export default function Home() {
                                 pluviometria_max={parseFloat(item.maxPluvi)}
                                 temperatura_min={parseFloat(item.minTemp)}
                                 pluviometria_min={parseFloat(item.minPluvi)}
-                                temperaturas={[]} // Colocar os dados reais se disponíveis
-                                pluviometrias={[]} // Colocar os dados reais se disponíveis
+                                temperaturas={item.temperaturas} // Colocar os dados reais se disponíveis
+                                pluviometrias={item.pluviometrias} // Colocar os dados reais se disponíveis
                                 alertasTemp={[]} // Colocar os dados reais se disponíveis
                                 alertasPluvi={[]} // Colocar os dados reais se disponíveis
                             />

@@ -5,54 +5,69 @@ import { Octicons, FontAwesome6 } from '@expo/vector-icons';
 import { style } from "./styles";
 import { CulturaDto } from '../../@types/culturaDto';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { RootStackParamList } from "../../navigation/types";
+import { RouteProp, useRoute } from '@react-navigation/native';
+
+
+type DashboardRouteProp = RouteProp<RootStackParamList, 'Dashboard'>;
 
 
 export default function Dashboard() {
 
 
-    const [temperatura, setTemperatura] = useState("")
-    const [pluviometria, setPluviometria] = useState("")
-    const [cultivo, setCultivoNome] = useState("")
+    // const [temperatura, setTemperatura] = useState("")
+    // const [pluviometria, setPluviometria] = useState("")
+    // const [cultivo, setCultivoNome] = useState("")
 
-    useEffect(() => {
-        const getData = async () => {
-            setCultivoNome(await AsyncStorage.getItem('cultura') ?? '');
-            setPluviometria(await AsyncStorage.getItem('pluviometria') ?? '');
-            setTemperatura(await AsyncStorage.getItem('temperatura') ?? '');
-        }
+    // useEffect(() => {
+    //     const getData = async () => {
+    //         setCultivoNome(await AsyncStorage.getItem('cultura') ?? '');
+    //         setPluviometria(await AsyncStorage.getItem('pluviometria') ?? '');
+    //         setTemperatura(await AsyncStorage.getItem('temperatura') ?? '');
+    //     }
 
-            getData()
-    }, []);
+    //         getData()
+    // }, []);
 
 
+    // const route = useRoute<DashboardRouteProp>();
+    // const { temperatura, pluviometria, cultura } = route.params;
 
+
+    const route = useRoute<DashboardRouteProp>();
+    const { temperatura, pluviometria, cultura } = route.params;
 
     return (
 
         <View style={style.container}>
 
             <View style={style.titulo}>
-                <Text style={style.texto1}>{cultivo}</Text>
+                <Text style={style.texto1}>{cultura}</Text>
             </View>
 
 
             <View style={style.cards}>
                 <CardDashbord
-                    title1="Temperatura Hoje"
-                    temperatura={temperatura}
+                    title1="Hoje"
+                    temperaturas={temperatura + 'ºC'}
                     IconName="sun"
-                    Icon={Octicons} />
+                    Icon={Octicons}
+                    showTemperatura={true}/>
 
 
 
                 <CardDashbord
                     title1="Chuva"
-                    temperatura={pluviometria + '%'}
+                    pluviometrias={pluviometria + '%'}
                     IconName="cloud-rain"
-                    Icon={FontAwesome6} />
+                    Icon={FontAwesome6}
+                    showTemperatura={false}
+                     />
 
             </View>
         </View>
 
     )
 }
+
+
