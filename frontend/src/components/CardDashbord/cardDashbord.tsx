@@ -9,26 +9,36 @@ type IconComponent = React.ComponentType<React.ComponentProps<typeof MaterialIco
     React.ComponentType<React.ComponentProps<typeof Octicons>>;
 
 
-type Props = TextInputProps & {
-    Icon: IconComponent,
-    IconName: string,
-    title1: string,
-    temperatura: string,
-}
+    type Props = {
+        Icon: IconComponent,
+        IconName: string,
+        _id: string,
+        ponto_cultivo: string,
+        nome_cultivo: string,
+        temperatura_max: number,
+        pluviometria_max: number,
+        temperatura_min: number,
+        pluviometria_min: number,
+        temperaturas: any[],
+        pluviometrias: any[],
+        alertasTemp: any[],
+        alertasPluvi: any[],
+    }
 
-export const CardDashbord = forwardRef((Props: Props, ref: LegacyRef<TextInput> | null) => {
+export const CardDashbord = (props: Props) => {
 
-    const { title1, Icon, IconName, temperatura, ...rest } = Props
+    const { Icon, IconName, nome_cultivo, _id, temperatura_max, pluviometria_max, temperatura_min, pluviometria_min, temperaturas, pluviometrias, alertasTemp, alertasPluvi } = props
 
 
     return (
         <>
 
             <View style={style.boxInput}>
-                <Text style={style.title}>{title1}</Text>
+                <Text style={style.title}>{nome_cultivo}</Text>
+
 
                 <Text style={style.temp}>
-                    {temperatura}
+                    {temperaturas} 
                 </Text>
 
                 <Icon name={IconName as any} size={35} ></Icon>
@@ -36,5 +46,5 @@ export const CardDashbord = forwardRef((Props: Props, ref: LegacyRef<TextInput> 
 
             </View>
         </>
-    )
-})
+    );
+}
