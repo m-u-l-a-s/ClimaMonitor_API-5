@@ -6,6 +6,7 @@ export type RootStackParamList = {
       temperatura: string;
       pluviometria: string;
       cultura: string;
+      
   };
     // Adicionar outras telas aqui
   };

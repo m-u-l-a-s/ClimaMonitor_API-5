@@ -27,7 +27,8 @@ type Props = {
     temperaturas: any[],
     pluviometrias: any[],
     alertasTemp: any[],
-    alertasPluvi: any[],
+    alertasPluvi: any[]
+    
 }
 
 
@@ -67,6 +68,7 @@ export const CardHome = (props: Props) => {
                   temperatura: temperaturas.slice(-1)[0].temperatura,
                   pluviometria: pluviometrias.slice(-1)[0].pluviometria,
                   cultura: nome_cultivo
+                  
             } )}>
 
                 <Text style={style.text}>{nome_cultivo}</Text>

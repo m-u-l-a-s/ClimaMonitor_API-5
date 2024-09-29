@@ -30,16 +30,16 @@ export default function Home() {
 
 
     const fetchCulturas = async () => {
-        console.log("Chamando fetchCulturas");
+        //console.log("Chamando fetchCulturas");
         try {
-            const response = await fetch("http://192.168.15.9:3000/cultura");
+            const response = await fetch("http://192.168.15.3:3000/cultura");
             if (response.ok) {
                 // const data: CulturaDto[] = await response.json();
                 // setCulturas(data);
                 // console.log( JSON.stringify(data));
                 const data: CulturaDto[] = await response.json();
                 setCulturas(data);
-                console.log(data);
+                //console.log(data);
             } else {
                 console.error("Erro ao obter as culturas else:", response.statusText);
             }
