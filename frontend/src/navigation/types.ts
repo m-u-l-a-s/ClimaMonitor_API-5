@@ -2,7 +2,12 @@
 export type RootStackParamList = {
     Home: undefined;
     Cadastro: undefined;
-    Dashboard: undefined;
+    Dashboard: {
+      temperatura: string;
+      pluviometria: string;
+      cultura: string;
+      
+  };
     // Adicionar outras telas aqui
   };
   

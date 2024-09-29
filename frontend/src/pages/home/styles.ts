@@ -29,14 +29,14 @@ export const style = StyleSheet.create({
             width: '100%',
             //backgroundColor:'green',
             paddingHorizontal: 37,
-           
-            
+           marginLeft:30,  
 
         },
 
         containerCard:{
             alignItems: 'center',
             justifyContent: 'center',
+           
             
         },
 

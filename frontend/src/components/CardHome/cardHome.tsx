@@ -8,6 +8,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
+
 type IconComponent = React.ComponentType<React.ComponentProps<typeof MaterialIcons>> |
     React.ComponentType<React.ComponentProps<typeof FontAwesome>> |
     React.ComponentType<React.ComponentProps<typeof Octicons>>;
@@ -26,38 +27,49 @@ type Props = {
     temperaturas: any[],
     pluviometrias: any[],
     alertasTemp: any[],
-    alertasPluvi: any[],
+    alertasPluvi: any[]
+    
 }
-
-
 
 
 type DashboardScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Dashboard'>;
 
 export const CardHome = (props: Props) => {
 
-    const { Icon, IconName, nome_cultivo, _id, temperatura_max, pluviometria_max, temperatura_min, pluviometria_min, temperaturas, pluviometrias, alertasTemp, alertasPluvi } = props
+    // const { Icon, IconName, nome_cultivo, _id, temperatura_max, pluviometria_max, temperatura_min, pluviometria_min, temperaturas, pluviometrias, alertasTemp, alertasPluvi } = props
 
+    // const navigation = useNavigation<DashboardScreenNavigationProp>();
+    // console.log(JSON.stringify(temperaturas))
+    // const setValues = async () => {
+    //     await AsyncStorage.setItem('temperatura', temperaturas.slice(-1)[0].temperatura)
+    //     await AsyncStorage.setItem('pluviometria', pluviometrias.slice(-1)[0].pluviometria)
+    //     await AsyncStorage.setItem('cultura', nome_cultivo)
+
+    // };
+
+
+
+    // useEffect(() => {
+    //     // setValues()
+    // }, []);
+
+
+    const { Icon, IconName, nome_cultivo, temperaturas, pluviometrias } = props;
     const navigation = useNavigation<DashboardScreenNavigationProp>();
-    console.log(JSON.stringify(temperaturas))
-    const setValues = async () => {
-        await AsyncStorage.setItem('temperatura', temperaturas.slice(-1)[0].temperatura)
-        await AsyncStorage.setItem('pluviometria', pluviometrias.slice(-1)[0].pluviometria)
-        await AsyncStorage.setItem('cultura', nome_cultivo)
-
-    };
-
-    useEffect(() => {
-        setValues()
-    }, []);
 
     const [modalVisible, setModalVisible] = useState(false);
+    //console.log(props)
 
 
     return (
 
         <View style={style.container}>
-            <TouchableOpacity style={style.containerTexto} onPress={() => navigation.navigate("Dashboard")}>
+            <TouchableOpacity style={style.containerTexto} onPress={() => navigation.navigate("Dashboard", {
+                  temperatura: temperaturas.slice(-1)[0].temperatura,
+                  pluviometria: pluviometrias.slice(-1)[0].pluviometria,
+                  cultura: nome_cultivo
+                  
+            } )}>
 
                 <Text style={style.text}>{nome_cultivo}</Text>
 
