@@ -17,7 +17,7 @@ type IconComponent = React.ComponentType<React.ComponentProps<typeof MaterialIco
 type Props = {
     Icon: IconComponent,
     IconName: string,
-    _id: string,
+    _id?: string,
     ponto_cultivo: string,
     nome_cultivo: string,
     temperatura_max: number,

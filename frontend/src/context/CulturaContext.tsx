@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { Cultivo } from '../@types/culturaDto2';
+import { Cultivo } from '../@types/culturaDto';
 import { BASE_URL } from '../variables';
 
 interface CultivoContextType {

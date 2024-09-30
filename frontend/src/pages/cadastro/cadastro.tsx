@@ -1,12 +1,10 @@
 // src/pages/cadastro/Cadastro.tsx
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, StyleSheet, Alert, ScrollView } from "react-native";
-import { Cultivo } from '../../@types/culturaDto2';
+import { View, Text, TextInput, Button, Alert, ScrollView } from "react-native";
+import { Cultivo } from '../../@types/culturaDto';
 import { BASE_URL } from "../../variables";
 import { useCultivoContext } from "../../context/CulturaContext";
-
-
-
+import styles from './styles';
 
 const Cadastro = () => {
     const { fetchCultivos } = useCultivoContext();
@@ -20,58 +18,61 @@ const Cadastro = () => {
 
     const handleSubmit = async () => {
         if (!latitude || !longitude || !nome_cultivo || !maxTemp || !minTemp || !maxPluvi || !minPluvi) {
-            Alert.alert("Error", "Please fill in all fields");
+            Alert.alert("Error", "Favor preencher todos os campos!");
             return;
         }
-
     
         const data: Cultivo = {
-           id : "",
-           nome_cultivo: nome_cultivo,
-           ponto_cultivo: {latitude:latitude, longitude:longitude},
-           temperatura_max: parseFloat(maxTemp),
-           temperatura_min: parseFloat(minTemp),
-           pluviometria_max:parseFloat(maxPluvi),
-           pluviometria_min:parseFloat(minPluvi),
-           pluviometrias:[],
-           temperaturas:[],
-           alertasPluvi:[],
-           alertasTemp:[],
-           lastUpdate: ""
+            nome_cultivo: nome_cultivo,
+            ponto_cultivo: { latitude: latitude, longitude: longitude },
+            temperatura_max: parseFloat(maxTemp),
+            temperatura_min: parseFloat(minTemp),
+            pluviometria_max: parseFloat(maxPluvi),
+            pluviometria_min: parseFloat(minPluvi),
+            pluviometrias: [],
+            temperaturas: [],
+            alertasPluvi: [],
+            alertasTemp: [],
+            lastUpdate: ""
         };
     
         console.log('dados enviados:', JSON.stringify(data));
         try {
-
             const response = await fetch(`${BASE_URL}/cultura`, {
-                
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(data),
-               
             });
     
             if (response.ok) {
                 const result = await response.json();
-                Alert.alert("Success", `Cadastro submitted for point at Latitude: ${result.latitude}, Longitude: ${result.longitude}`); 
-                await fetchCultivos()               
+                Alert.alert("Success", "Cadastro realizado com sucesso!");
+                await fetchCultivos();
+    
+                setLatitude("");
+                setLongitude("");
+                setnome_cultivo("");
+                setMaxTemp("");
+                setMinTemp("");
+                setMaxPluvi("");
+                setMinPluvi("");
             } else {
                 const error = await response.json();
-                console.log('else: ', response)
-                console.error('Error response:', error); // Log the error response
-                Alert.alert("Error", error.message || "Failed to submit the form");
+                console.error('Error response:', error);
+                Alert.alert("Error", error.message || "Ocorreu um erro ao submeter o formulário.");
             }
         } catch (error) {
-            console.error('Fetch error:', error); // Log the error
-            Alert.alert("Error", "Alguém me da uma cartela de diazepam PELO AMOR DE DEUS");
+            console.error('Fetch error:', error);
+            Alert.alert("Error", "Não foi possível conectar com o backend.");
         }
     };
     
+
     return (
         <ScrollView 
-            contentContainerStyle={styles.container} // Use contentContainerStyle here
+            contentContainerStyle={styles.container}
             keyboardShouldPersistTaps="handled"
         >
             <Text style={styles.title}>Cadastro de Monitoramento</Text>
@@ -80,14 +81,14 @@ const Cadastro = () => {
             <Text style={styles.label}>Local</Text>
             <TextInput
                 style={styles.input}
-                placeholder="Latitude"
+                placeholder="Latitude (ex: '-23.5505')"
                 value={latitude}
                 onChangeText={setLatitude}
                 keyboardType="numeric"
             />
             <TextInput
                 style={styles.input}
-                placeholder="Longitude"
+                placeholder="Longitude (ex: '-46.5505')"
                 value={longitude}
                 onChangeText={setLongitude}
                 keyboardType="numeric"
@@ -105,14 +106,6 @@ const Cadastro = () => {
             
             <Text style={styles.label}>Frequência de Análise de Temperatura</Text>
             <Text style={styles.label}>Diariamente</Text>
-            {/* <Picker
-                selectedValue={tempFrequency}
-                style={styles.picker}
-                onValueChange={(itemValue) => setTempFrequency(itemValue)}
-            >
-                <Picker.Item label="Diariamente" value="diariamente" />
-                <Picker.Item label="Semanalmente" value="semanalmente" />
-            </Picker> */}
 
             <Text style={styles.label}>Temperatura Máxima</Text>
             <TextInput
@@ -134,14 +127,6 @@ const Cadastro = () => {
 
             <Text style={styles.label}>Frequência de Análise de Pluviometria</Text>
             <Text style={styles.label}>Diariamente</Text>
-            {/* <Picker
-                selectedValue={pluviFrequency}
-                style={styles.picker}
-                onValueChange={(itemValue) => setPluviFrequency(itemValue)}
-            >
-                <Picker.Item label="Diariamente" value="diariamente" />
-                <Picker.Item label="Semanalmente" value="semanalmente" />
-            </Picker> */}
 
             <Text style={styles.label}>Pluviometria Máxima (mm)</Text>
             <TextInput
@@ -166,47 +151,4 @@ const Cadastro = () => {
     );
 };
 
-const styles = StyleSheet.create({
-    container: {
-        flexGrow: 1,
-        justifyContent: "center",
-        padding: 16,
-        backgroundColor: "#ffffff"
-    },
-    title: {
-        fontSize: 24,
-        marginBottom: 20,
-        textAlign: "center",
-    },
-    subtitle: {
-        fontSize: 20,
-        marginBottom: 12,
-        textAlign: "center",
-    },
-    label: {
-        fontSize: 16,
-        marginBottom: 8,
-    },
-    input: {
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        marginBottom: 12,
-        paddingHorizontal: 10,
-    },
-    alertsHeader: {
-        fontSize: 20,
-        marginVertical: 20,
-        textAlign: "center",
-    },
-    picker: {
-        height: 50,
-        marginBottom: 12,
-    },
-});
-
 export default Cadastro;
-function formatInTimeZone(dataUpdate: Date, arg1: string, arg2: string): string {
-    throw new Error("Function not implemented.");
-}
-

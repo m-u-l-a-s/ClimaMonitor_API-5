@@ -8,8 +8,8 @@ import { CardHome } from "../../components/CardHome/cardHome";
 import { MaterialIcons } from '@expo/vector-icons';
 import { CompositeNavigationProp, NavigatorScreenParams } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../../navigation/types'; // Import your types
-import { CulturaDto } from '../../@types/culturaDto';
+import { RootStackParamList } from '../../navigation/types';
+import { Cultivo } from '../../@types/culturaDto';
 import { useCultivoContext } from "../../context/CulturaContext";
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
@@ -33,22 +33,22 @@ export default function Home() {
             <View style={style.boxMid}>
                 <View style={style.containerCard}>
 
-                    <FlatList
+                <FlatList
                         data={cultivos}
-                        keyExtractor={(item) => item._id} // Definindo uma chave única para cada item
-                        renderItem={({ item }) => (
+                        renderItem={({ item , index}) => (
                             <CardHome
                                 Icon={MaterialIcons}
                                 IconName={"more-horiz"}
                                 _id={item._id}
+                                key={index}
                                 nome_cultivo={item.nome_cultivo}
                                 ponto_cultivo={`${item.ponto_cultivo.latitude}, ${item.ponto_cultivo.longitude}`}
                                 temperatura_max={item.temperatura_max}
                                 pluviometria_max={item.pluviometria_max}
                                 temperatura_min={item.temperatura_min}
                                 pluviometria_min={item.pluviometria_min}
-                                temperaturas={item.temperaturas} // Colocar os dados reais se disponíveis
-                                pluviometrias={item.pluviometrias} // Colocar os dados reais se disponíveis
+                                temperaturas={item.temperaturas} 
+                                pluviometrias={item.pluviometrias}
                                 alertasTemp={[]} // Colocar os dados reais se disponíveis
                                 alertasPluvi={[]} // Colocar os dados reais se disponíveis
                             />
