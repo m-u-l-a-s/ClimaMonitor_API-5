@@ -1,1 +1,1 @@
-export const BASE_URL = "http://192.168.0.23:3000";
+export const BASE_URL = ""; //Adicione o endereço ip e a porta do backend exemplo: http://172.2.2.10:3000

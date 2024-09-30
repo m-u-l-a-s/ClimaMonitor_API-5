@@ -58,7 +58,7 @@ export const CardHome = (props: Props) => {
     const navigation = useNavigation<DashboardScreenNavigationProp>();
 
     const [modalVisible, setModalVisible] = useState(false);
-    //console.log(props)
+    // console.log(props)
 
 
     return (
@@ -93,7 +93,7 @@ export const CardHome = (props: Props) => {
                         <TouchableOpacity onPress={() => { setModalVisible(false); navigation.navigate('Rota2'); }}>
                             <Text style={style.modalText}>Editar</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => { setModalVisible(false); navigation.navigate('Rota3'); }}>
+                        <TouchableOpacity onPress={() => { setModalVisible(false); navigation.navigate('Excluir'); }}>
                             <Text style={style.modalText}>Excluir</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => setModalVisible(false)}>
