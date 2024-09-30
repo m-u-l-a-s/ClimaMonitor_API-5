@@ -35,12 +35,12 @@ export default function Home() {
 
                     <FlatList
                         data={cultivos}
-                        keyExtractor={(item) => item.id} // Definindo uma chave única para cada item
+                        keyExtractor={(item) => item._id} // Definindo uma chave única para cada item
                         renderItem={({ item }) => (
                             <CardHome
                                 Icon={MaterialIcons}
                                 IconName={"more-horiz"}
-                                _id={item.id}
+                                _id={item._id}
                                 nome_cultivo={item.nome_cultivo}
                                 ponto_cultivo={`${item.ponto_cultivo.latitude}, ${item.ponto_cultivo.longitude}`}
                                 temperatura_max={item.temperatura_max}
