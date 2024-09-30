@@ -18,6 +18,7 @@ interface  PontoCultivo {
   }
   
   export interface Cultivo {
+    id : string 
     ponto_cultivo: PontoCultivo;
     nome_cultivo: string;
     temperatura_max: number;

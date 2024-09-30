@@ -1,23 +1,25 @@
-import { StyleSheet} from 'react-native';
+import { StyleSheet } from 'react-native';
 import Routes from './src/routes/index.routes';
 import { NavigationContainer } from '@react-navigation/native';
 import React from 'react';
+import { CultivoProvider } from './src/context/CulturaContext';
 
 
 
 export default function App() {
   return (
-    <NavigationContainer>
+    <CultivoProvider>
+      <NavigationContainer>
 
-      <Routes/>
+        <Routes />
 
-    </NavigationContainer>
-    
+      </NavigationContainer>
+    </CultivoProvider>
   );
 }
 
 const styles = StyleSheet.create({
- container:{
-  flex:1,
- }
+  container: {
+    flex: 1,
+  }
 });

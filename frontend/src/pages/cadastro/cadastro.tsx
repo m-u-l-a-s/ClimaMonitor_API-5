@@ -3,16 +3,13 @@ import React, { useState } from "react";
 import { View, Text, TextInput, Button, StyleSheet, Alert, ScrollView } from "react-native";
 import { Cultivo } from '../../@types/culturaDto2';
 import { BASE_URL } from "../../variables";
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from "../../navigation/types";
-import { useNavigation } from '@react-navigation/native';
+import { useCultivoContext } from "../../context/CulturaContext";
 
 
-type CadastroScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Cadastro'>;
 
 
 const Cadastro = () => {
-    const navigation = useNavigation<CadastroScreenNavigationProp>(); //navegação tipada
+    const { fetchCultivos } = useCultivoContext();
     const [latitude, setLatitude] = useState("");
     const [longitude, setLongitude] = useState("");
     const [nome_cultivo, setnome_cultivo] = useState("");
@@ -29,6 +26,7 @@ const Cadastro = () => {
 
     
         const data: Cultivo = {
+           id : "",
            nome_cultivo: nome_cultivo,
            ponto_cultivo: {latitude:latitude, longitude:longitude},
            temperatura_max: parseFloat(maxTemp),
@@ -57,7 +55,8 @@ const Cadastro = () => {
     
             if (response.ok) {
                 const result = await response.json();
-                Alert.alert("Success", `Cadastro submitted for point at Latitude: ${result.latitude}, Longitude: ${result.longitude}`);                
+                Alert.alert("Success", `Cadastro submitted for point at Latitude: ${result.latitude}, Longitude: ${result.longitude}`); 
+                await fetchCultivos()               
             } else {
                 const error = await response.json();
                 console.log('else: ', response)
