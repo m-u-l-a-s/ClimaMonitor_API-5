@@ -1,21 +1,25 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
+import Routes from './src/routes/index.routes';
+import { NavigationContainer } from '@react-navigation/native';
+import React from 'react';
+import { CultivoProvider } from './src/context/CulturaContext';
+
+
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Olá Mundo!!</Text>
-      <Text>Bem-Vindo Mulas!!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <CultivoProvider>
+      <NavigationContainer>
+
+        <Routes />
+
+      </NavigationContainer>
+    </CultivoProvider>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+  }
 });
