@@ -39,18 +39,8 @@ export default function Home() {
                             <CardHome
                                 Icon={MaterialIcons}
                                 IconName={"more-horiz"}
-                                _id={item._id}
                                 key={index}
-                                nome_cultivo={item.nome_cultivo}
-                                ponto_cultivo={`${item.ponto_cultivo.latitude}, ${item.ponto_cultivo.longitude}`}
-                                temperatura_max={item.temperatura_max}
-                                pluviometria_max={item.pluviometria_max}
-                                temperatura_min={item.temperatura_min}
-                                pluviometria_min={item.pluviometria_min}
-                                temperaturas={item.temperaturas} 
-                                pluviometrias={item.pluviometrias}
-                                alertasTemp={[]} // Colocar os dados reais se disponíveis
-                                alertasPluvi={[]} // Colocar os dados reais se disponíveis
+                                cultura={item}
                             />
                         )}
                     />

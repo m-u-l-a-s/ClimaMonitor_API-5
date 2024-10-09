@@ -13,23 +13,15 @@ type IconComponent = React.ComponentType<React.ComponentProps<typeof MaterialIco
         Icon: IconComponent,
         IconName: string,
         title1: string,
-        _id: string,
-        ponto_cultivo: string,
-        nome_cultivo: string,
-        temperatura_max: number,
-        pluviometria_max: number,
-        temperatura_min: number,
-        pluviometria_min: number,
-        temperaturas: any[],
-        pluviometrias: any[],
-        alertasTemp: any[],
-        alertasPluvi: any[],
+        _id: string | undefined,
+        temperatura?: string,
+        pluviometria?:string,
         showTemperatura: boolean;
     }
 
 export const CardDashbord = (props: Props) => {
 
-    const { Icon, IconName, nome_cultivo,title1, _id, temperatura_max, pluviometria_max, temperatura_min, pluviometria_min, temperaturas, pluviometrias, alertasTemp, alertasPluvi, showTemperatura } = props
+    const { Icon, IconName,title1,temperatura, pluviometria, showTemperatura } = props
 
 
     return (
@@ -40,7 +32,7 @@ export const CardDashbord = (props: Props) => {
 
 
                 <Text style={style.temp}>
-                {showTemperatura ? temperaturas : pluviometrias}
+                {showTemperatura ? temperatura : pluviometria}
                 </Text>
 
                 <Icon name={IconName as any} size={35} ></Icon>

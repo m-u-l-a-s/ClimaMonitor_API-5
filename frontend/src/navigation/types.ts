@@ -1,3 +1,5 @@
+import { Cultivo } from "../@types/culturaDto";
+
 // src/navigation/types.ts
 export type RootStackParamList = {
     Home: undefined;
@@ -5,8 +7,7 @@ export type RootStackParamList = {
     Dashboard: {
       temperatura: string;
       pluviometria: string;
-      cultura: string;
-      
+      cultura: Cultivo;
   };
     // Adicionar outras telas aqui
   };

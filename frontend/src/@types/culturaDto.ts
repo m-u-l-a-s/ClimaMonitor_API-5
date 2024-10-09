@@ -5,7 +5,9 @@ interface  PontoCultivo {
   
   interface Temperatura {
     data: string;
-    temperatura: number;
+    temperatura_media: number;
+    temperatura_min: number;
+    temperatura_max: number;
   }
   
   interface Pluviometria {

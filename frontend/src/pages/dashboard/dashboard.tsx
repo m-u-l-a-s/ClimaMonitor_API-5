@@ -3,8 +3,6 @@ import { Text, View } from 'react-native';
 import { CardDashbord } from "../../components/CardDashbord/cardDashbord";
 import { Octicons, FontAwesome6 } from '@expo/vector-icons';
 import { style } from "./styles";
-import { CulturaDto } from '../../@types/culturaDto';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { RootStackParamList } from "../../navigation/types";
 import { RouteProp, useRoute } from '@react-navigation/native';
 
@@ -42,27 +40,32 @@ export default function Dashboard() {
         <View style={style.container}>
 
             <View style={style.titulo}>
-                <Text style={style.texto1}>{cultura}</Text>
+                <Text style={style.texto1}>{cultura.nome_cultivo}</Text>
             </View>
 
 
             <View style={style.cards}>
                 <CardDashbord
+                    _id={cultura._id}
+                    key={cultura._id}
+                    pluviometria={pluviometria}
                     title1="Hoje"
-                    temperaturas={temperatura + 'ºC'}
+                    temperatura={temperatura + 'ºC'}
                     IconName="sun"
                     Icon={Octicons}
-                    showTemperatura={true}/>
-
+                    showTemperatura={true} />
 
 
                 <CardDashbord
+                    _id={cultura._id}
+                    key={cultura._id}
                     title1="Chuva"
-                    pluviometrias={pluviometria + '%'}
+                    pluviometria={pluviometria + '%'}
                     IconName="cloud-rain"
                     Icon={FontAwesome6}
                     showTemperatura={false}
-                     />
+                    temperatura={temperatura}
+                />
 
             </View>
         </View>
