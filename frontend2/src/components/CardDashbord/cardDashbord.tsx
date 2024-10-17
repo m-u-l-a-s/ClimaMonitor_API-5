@@ -3,6 +3,7 @@ import { Text, TextInput, TextInputProps, TouchableOpacity, View } from 'react-n
 import { style } from './styles';
 //import { MaterialIcons, Octicons, FontAwesome } from '@expo/vector-icons';
 import { themas } from '../../global/themes';
+import { Cultivo } from '../../@types/culturaDto';
 
 // type IconComponent = React.ComponentType<React.ComponentProps<typeof MaterialIcons>> |
 //     React.ComponentType<React.ComponentProps<typeof FontAwesome>> |
@@ -13,24 +14,14 @@ import { themas } from '../../global/themes';
         //Icon: IconComponent,
         //IconName: string,
         title1: string,
-        _id: string,
-        ponto_cultivo: string,
-        nome_cultivo: string,
-        temperatura_max: number,
-        pluviometria_max: number,
-        temperatura_min: number,
-        pluviometria_min: number,
-        temperaturas: any[],
-        pluviometrias: any[],
-        alertasTemp: any[],
-        alertasPluvi: any[],
+        valor: string
         showTemperatura: boolean;
     }
 
 export const CardDashbord = (props: Props) => {
 
     //const { Icon, IconName, nome_cultivo,title1, _id, temperatura_max, pluviometria_max, temperatura_min, pluviometria_min, temperaturas, pluviometrias, alertasTemp, alertasPluvi, showTemperatura } = props
-    const {nome_cultivo,title1, _id, temperatura_max, pluviometria_max, temperatura_min, pluviometria_min, temperaturas, pluviometrias, alertasTemp, alertasPluvi, showTemperatura } = props
+    const {title1, valor, showTemperatura } = props
 
 
     return (
@@ -41,7 +32,7 @@ export const CardDashbord = (props: Props) => {
 
 
                 <Text style={style.temp}>
-                {showTemperatura ? temperaturas : pluviometrias}
+                {showTemperatura ? `${valor} ºC` : `${valor} mm`}
                 </Text>
 {/* 
                 <Icon name={IconName as any} size={35} ></Icon> */}

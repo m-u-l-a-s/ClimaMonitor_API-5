@@ -5,6 +5,7 @@ import { style } from './styles';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../navigation/types';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { Cultivo } from '../../@types/culturaDto';
 //import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
@@ -34,7 +35,7 @@ type Props = {
 
 type DashboardScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Dashboard'>;
 
-export const CardHome = (props: Props) => {
+export const CardHome = (props: Cultivo) => {
 
     // const { Icon, IconName, nome_cultivo, _id, temperatura_max, pluviometria_max, temperatura_min, pluviometria_min, temperaturas, pluviometrias, alertasTemp, alertasPluvi } = props
 
@@ -66,10 +67,7 @@ export const CardHome = (props: Props) => {
 
         <View style={style.container}>
             <TouchableOpacity style={style.containerTexto} onPress={() => navigation.navigate("Dashboard", {
-                  temperatura: temperaturas.slice(-1)[0].temperatura,
-                  pluviometria: pluviometrias.slice(-1)[0].pluviometria,
-                  cultura: nome_cultivo
-                  
+                  cultura: props
             } )}>
 
                 <Text style={style.text}>{nome_cultivo}</Text>
