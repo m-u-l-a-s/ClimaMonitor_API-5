@@ -4,7 +4,7 @@ import { themas } from "../../global/themes";
 
 export const style = StyleSheet.create({
     container: {
-        height: 90, // Defina uma altura apropriada
+        height: 80, // Defina uma altura apropriada
         justifyContent: 'space-between',
         alignItems: 'center',
         flexDirection: "row",
@@ -15,7 +15,7 @@ export const style = StyleSheet.create({
     usuario:{
         flexDirection: "row",
         justifyContent: 'space-between',
-        marginTop: 28, 
+        marginTop: 5, 
         
     },
 
@@ -27,7 +27,7 @@ export const style = StyleSheet.create({
     },
 
     notificacao:{
-        marginTop: 28,
+        marginTop: 5,
     },
 
     content: {

@@ -5,7 +5,7 @@ import { style } from "./styles";
 import { Button } from "../../components/Button/button";
 import { useNavigation } from '@react-navigation/native';
 import { CardHome } from "../../components/CardHome/cardHome";
-//import { MaterialIcons } from '@expo/vector-icons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { CompositeNavigationProp, NavigatorScreenParams } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../navigation/types';
@@ -16,7 +16,7 @@ type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
 
 export default function Home() {
     const navigation = useNavigation<HomeScreenNavigationProp>(); //navegação tipada
-    const {cultivos, fetchCultivos} = useCultivoContext()
+    const { cultivos, fetchCultivos } = useCultivoContext()
 
     const handleNovoCadastro = () => {
         navigation.navigate('Cadastro');
@@ -33,12 +33,12 @@ export default function Home() {
             <View style={style.boxMid}>
                 <View style={style.containerCard}>
 
-                <FlatList
+                    <FlatList
                         data={cultivos}
-                        renderItem={({ item , index}) => (
+                        renderItem={({ item, index }) => (
                             <CardHome
-                               // Icon={MaterialIcons}
-                               // IconName={"more-horiz"}
+                                Icon={MaterialIcons}
+                                IconName={"more-horiz"}
                                 _id={item._id}
                                 key={index}
                                 nome_cultivo={item.nome_cultivo}
@@ -47,7 +47,7 @@ export default function Home() {
                                 pluviometria_max={item.pluviometria_max}
                                 temperatura_min={item.temperatura_min}
                                 pluviometria_min={item.pluviometria_min}
-                                temperaturas={item.temperaturas} 
+                                temperaturas={item.temperaturas}
                                 pluviometrias={item.pluviometrias}
                                 alertasTemp={[]} // Colocar os dados reais se disponíveis
                                 alertasPluvi={[]} // Colocar os dados reais se disponíveis

@@ -26,7 +26,7 @@ export const style = StyleSheet.create(
             paddingHorizontal: 37,
 
         },
-       
+
         img: {
 
             height: 100,
@@ -41,8 +41,15 @@ export const style = StyleSheet.create(
         },
 
         textBottom: {
-            fontSize: 16,
+            fontSize: 18,
         },
+
+        textoRodape: {
+            flexDirection: 'row', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            marginTop: 20,
+        }
 
 
     }

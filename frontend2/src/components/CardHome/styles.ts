@@ -10,7 +10,7 @@ export const style = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         backgroundColor: themas.colors.fundoCards,
-        borderColor: themas.colors.bordaCards,
+        borderColor: "#326B20",
         borderRadius:5,
         marginBottom:15,
         shadowColor: "#000",
