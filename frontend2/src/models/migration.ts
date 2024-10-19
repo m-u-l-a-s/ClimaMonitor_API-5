@@ -1,25 +1,16 @@
-import { createTable, schemaMigrations } from '@nozbe/watermelondb/Schema/migrations'
+import { addColumns, schemaMigrations } from '@nozbe/watermelondb/Schema/migrations'
+import { updateCultura } from '../services/watermelon'
 
 export default schemaMigrations({
   migrations: [
     // {
-    //   toVersion: 1,
+    //   toVersion: 2,
     //   steps: [
-    //     createTable({
-    //       name: "culturas",
+    //     addColumns({
+    //       table: "culturas",
     //       columns: [
-    //         { name: "_id", type: "string", isIndexed: true, isOptional: true },
-    //         { name: "ponto_cultivo", type: "string" },
-    //         { name: "nome_cultivo", type: "string" },
-    //         { name: "temperatura_max", type: "number" },
-    //         { name: "pluviometria_max", type: "number" },
-    //         { name: "temperatura_min", type: "number" },
-    //         { name: "pluviometria_min", type: "number" },
-    //         { name: "temperaturas", type: "string", isOptional: true },
-    //         { name: "pluviometrias", type: "string", isOptional: true },
-    //         { name: "alertasTemp", type: "string", isOptional:true },
-    //         { name: "alertasPluvi", type: "string", isOptional: true },
-    //         { name: "lastUpdate", type: "number", isOptional: true }
+    //         { name: "createdAt", type: "string", isOptional: true },
+    //         { name: "deletedAt", type: "string", isOptional: true }
     //       ]
     //     })
     //   ]

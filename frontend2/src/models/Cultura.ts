@@ -1,11 +1,9 @@
 import { Model } from "@nozbe/watermelondb";
 import {date, field, json} from "@nozbe/watermelondb/decorators"
-import { Associations } from "@nozbe/watermelondb/Model";
-import { culturaSchema } from "./culturaSchema";
 import { Pluviometria, PontoCultivo, Temperatura } from "../@types/culturaDto";
 
-export default class CulturaModel extends Model {
-    static table: string = "culturas"
+export default class CulturasModel extends Model {
+    static table: string = "Cultura"
 
     @field("_id") _id?: string
     @json("ponto_cultivo", (value) => satinezeJson(value)) ponto_cultivo!: PontoCultivo;
@@ -19,6 +17,8 @@ export default class CulturaModel extends Model {
     @json("alertasTemp", (value) => satinezeJson(value)) alertasTemp?: Temperatura[];
     @json("alertasPluvi", (value) => satinezeJson(value)) alertasPluvi?: Pluviometria[];
     @field("lastUpdate") lastUpdate!: string;
+    @field("createdAt") createdAt!: string;
+    @field("deletedAt") deletedAt!: string;
 
 }
 

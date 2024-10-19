@@ -1,7 +1,7 @@
 import { appSchema} from "@nozbe/watermelondb";
-import { culturaSchema } from "./culturaSchema";
+import { oldculturaSchema } from "./culturaSchema";
 
 export const mySchema = appSchema({
     version:1,
-    tables: [culturaSchema],
+    tables: [oldculturaSchema],
 }) 

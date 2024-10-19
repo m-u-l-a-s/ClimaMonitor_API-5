@@ -1,7 +1,7 @@
 import { tableSchema } from "@nozbe/watermelondb";
 
-export const culturaSchema = tableSchema({ 
-    name: "culturas",
+export const oldculturaSchema = tableSchema({ 
+    name: "Cultura",
     columns: [
         {name: "_id", type: "string", isIndexed: true, isOptional: true},
         {name: "ponto_cultivo", type: "string"},
@@ -15,6 +15,8 @@ export const culturaSchema = tableSchema({
         {name: "alertasTemp", type: "string"},
         {name: "alertasPluvi", type: "string"},
         {name: "lastUpdate", type: "string"},
+        {name: "createdAt", type: "string"},
+        {name: "deletedAt", type: "string"}
     ]
 })
 

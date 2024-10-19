@@ -46,17 +46,17 @@ export default function Dashboard() {
             <View style={style.cards}>
                 <CardDashbord
                     title1="Temperatura Máx"
-                    valor={cultura.temperaturas.slice(-1)[0].temperatura_max.toString()}
+                    valor={ cultura.temperaturas && cultura.temperaturas.length != 0 ? cultura.temperaturas.slice(-1)[0].temperatura_max.toString() : "..."}
                     IconName="sun"
                     //Icon={Octicons}
                     showTemperatura={true}/>
 
                 <CardDashbord
                     title1="Temperatura Min"
-                    valor={cultura.temperaturas.slice(-1)[0].temperatura_min.toString()}
+                    valor={cultura.temperaturas && cultura.temperaturas.length != 0 ? cultura.temperaturas.slice(-1)[0].temperatura_min.toString() : "..."}
                     IconName="cloud-rain"
                    // Icon={FontAwesome6}
-                    showTemperatura={false}
+                    showTemperatura={true}
                      />
 
             </View>
@@ -64,7 +64,7 @@ export default function Dashboard() {
             <View style={style.cards}>
                 <CardDashbord
                     title1="Temperatura Média"
-                    valor={cultura.temperaturas.slice(-1)[0].temperatura_media.toString()}
+                    valor={cultura.temperaturas && cultura.temperaturas.length != 0 ? cultura.temperaturas.slice(-1)[0].temperatura_media.toString() : "..."}
                     IconName="sun"
                     //Icon={Octicons}
                     showTemperatura={true}/>
@@ -73,7 +73,7 @@ export default function Dashboard() {
 
                 <CardDashbord
                     title1="Chuva"
-                    valor={cultura.pluviometrias.slice(-1)[0].pluviometria.toString()}
+                    valor={cultura.pluviometrias && cultura.pluviometrias.length != 0 ? cultura.pluviometrias.slice(-1)[0].pluviometria.toString() : "..."}
                     IconName="cloud-rain"
                    // Icon={FontAwesome6}
                     showTemperatura={false}
