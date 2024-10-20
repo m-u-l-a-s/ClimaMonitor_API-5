@@ -16,9 +16,39 @@ const Cadastro = () => {
     const [maxPluvi, setMaxPluvi] = useState("");
     const [minPluvi, setMinPluvi] = useState("");
 
+
+    // Validar e formatar Latitude e Longitude
+    const validateCoordinates = (latitude: string, longitude: string): { formattedLat: string, formattedLon: string } | null => {
+    const lat = parseFloat(latitude);
+    const lon = parseFloat(longitude);
+
+    if (isNaN(lat) || lat < -90 || lat > 90) {
+        console.error("Latitude inválida. Valor deve estar entre -90 e 90.");
+        return null;
+    }
+
+    if (isNaN(lon) || lon < -180 || lon > 180) {
+        console.error("Longitude inválida. Valor deve estar entre -180 e 180.");
+        return null;
+    }
+
+    const formattedLat = lat.toFixed(6);
+    const formattedLon = lon.toFixed(6);
+
+    return { formattedLat, formattedLon };
+};
+
+
+
     const handleSubmit = async () => {
         if (!latitude || !longitude || !nome_cultivo || !maxTemp || !minTemp || !maxPluvi || !minPluvi) {
             Alert.alert("Error", "Favor preencher todos os campos!");
+            return;
+        }
+
+        const formattedCoordinates = validateCoordinates(latitude, longitude);
+        if (!formattedCoordinates) {
+            Alert.alert("Error", "As coordenadas fornecidas são inválidas.");
             return;
         }
     
