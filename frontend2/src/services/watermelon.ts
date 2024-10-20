@@ -1,10 +1,14 @@
 import { synchronize } from '@nozbe/watermelondb/sync'
-import { Collection } from "@nozbe/watermelondb";
+import { Collection, Model, Q } from "@nozbe/watermelondb";
 import { Cultivo, Pluviometria, Temperatura } from "../@types/culturaDto";
 import { database } from "../database"
 import CulturaModel from "../models/Cultura";
-import { BASE_URL } from '../variables';
+import { BASE_URL, getTimeStamp } from '../variables';
 import { formatInTimeZone } from 'date-fns-tz';
+import axios, { Axios } from "axios"
+import * as moment from 'moment';
+import { parseISO } from 'date-fns';
+import CulturasModel from '../models/Cultura';
 
 
 export const getCulturas = async (): Promise<Collection<CulturaModel>> => {
@@ -25,12 +29,9 @@ export const createNewCultura = async (culturaDto: Cultivo) => {
     try {
         await database.write(async () => {
             const culturaCollection = database.get<CulturaModel>('Cultura');
-
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1)
-
+            const time = formatInTimeZone(new Date(), 'America/Sao_Paulo', "yyyy-MM-dd'T'HH:mm:ssXXX")
             await culturaCollection.create(cultura => {
-                cultura._id = culturaDto._id || undefined;
+                cultura._id = "";
                 cultura.ponto_cultivo = culturaDto.ponto_cultivo;
                 cultura.nome_cultivo = culturaDto.nome_cultivo;
                 cultura.temperatura_max = culturaDto.temperatura_max;
@@ -41,9 +42,10 @@ export const createNewCultura = async (culturaDto: Cultivo) => {
                 cultura.pluviometrias = culturaDto.pluviometrias;
                 cultura.alertasTemp = culturaDto.alertasTemp;
                 cultura.alertasPluvi = culturaDto.alertasPluvi;
-                cultura.lastUpdate = formatInTimeZone(yesterday, 'America/Sao_Paulo', "yyyy-MM-dd'T'HH:mm:ssXXX");
+                cultura.lastUpdate = time;
+                cultura.createdAt = time;
+                cultura.deletedAt = "";
             });
-            console.log('Cultura criada com sucesso');
         });
     } catch (error) {
         console.error('Erro ao criar cultura:', error);
@@ -52,6 +54,7 @@ export const createNewCultura = async (culturaDto: Cultivo) => {
 
 export const updateCultura = async (culturaDto: Cultivo, id: string) => {
     const cultivo = await findOneCultura(id)
+    const time = formatInTimeZone(new Date(), 'America/Sao_Paulo', "yyyy-MM-dd'T'HH:mm:ssXXX")
 
     await database.write(async () => {
         await cultivo.update(updateCultura => {
@@ -62,7 +65,7 @@ export const updateCultura = async (culturaDto: Cultivo, id: string) => {
                 updateCultura.pluviometria_max = culturaDto.pluviometria_max,
                 updateCultura.pluviometria_min = culturaDto.pluviometria_min,
                 updateCultura.pluviometrias = culturaDto.pluviometrias,
-                updateCultura.lastUpdate = formatInTimeZone(new Date(), 'America/Sao_Paulo', "yyyy-MM-dd'T'HH:mm:ssXXX"),
+                updateCultura.lastUpdate = time,
                 updateCultura.alertasPluvi = culturaDto.alertasPluvi,
                 updateCultura.alertasTemp = culturaDto.alertasTemp
         })
@@ -87,25 +90,24 @@ export async function deleteAllData() {
     })
 }
 
+export async function getLastUpdate(): Promise<CulturaModel[]> {
+    const cultura = await getCulturas()
+    const lastUpdate = await cultura.query(Q.sortBy("lastUpdate",Q.desc), Q.take(1), ).fetch()
+    return lastUpdate
+}
+
 
 export async function mySync() {
     await synchronize({
         database,
-        pullChanges: async ({ lastPulledAt, schemaVersion, migration }) => {
-            let urlParams
-            if (lastPulledAt == null) {
-                urlParams = ``
-            } else {
-                urlParams = `?lastPulledAt=${lastPulledAt}`
-            }
+        pullChanges: async ({ lastPulledAt }) => {
 
-            console.log(`${BASE_URL}/cultura/sync${urlParams}`)
+            console.log(`${BASE_URL}/cultura/sync${await getTimeStamp()}`)
 
-            const response = await fetch(`${BASE_URL}/cultura/sync${urlParams}`)
-            console.log(lastPulledAt)
+            const response = await fetch(`${BASE_URL}/cultura/sync${await getTimeStamp()}`)
+            console.log(response)
+
             if (!response.ok) {
-                console.log(response.url)
-                console.log(`lastPulledAt: ${lastPulledAt}`)
                 throw new Error(await response.text())
             }
 
@@ -113,14 +115,15 @@ export async function mySync() {
 
             return { changes, timestamp }
         },
+
         pushChanges: async ({ changes, lastPulledAt }) => {
-            // const response = await fetch(`${BASE_URL}/sync`, {
-            //     method: 'POST',
-            //     body: JSON.stringify(changes),
-            // })
-            // if (!response.ok) {
-            //     throw new Error(await response.text())
-            // }
+            const response = await axios.post(`${BASE_URL}/cultura/sync?${lastPulledAt}`, changes)
+
+            console.log(`resposta: ${response}`)
+
+            if (!(response.status == 200)) {
+                throw new Error(await response.data)
+            }
         },
         migrationsEnabledAtVersion: 1,
     })

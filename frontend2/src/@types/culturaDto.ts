@@ -27,5 +27,7 @@ export interface Cultivo {
   pluviometrias?: Pluviometria[];
   alertasTemp?: Temperatura[];
   alertasPluvi?: Pluviometria[];
-  lastUpdate: string;
+  lastUpdate?: string;
+  createdAt: string;
+  deletedAt: string;
 }

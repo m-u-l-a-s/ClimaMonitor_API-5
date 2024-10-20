@@ -13,7 +13,7 @@ import { Cultivo } from '../../@types/culturaDto';
 import { useCultivoContext } from "../../context/CulturaContext";
 import { withObservables } from "@nozbe/watermelondb/react"
 import CulturaModel from "../../models/Cultura";
-import { findAllCultura } from "../../services/watermelon";
+import { findAllCultura, mySync } from "../../services/watermelon";
 
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
@@ -40,7 +40,7 @@ export default function Home() {
         }
     };
 
-    useEffect(() => {
+    useEffect( () => {
         fetchCulturas();
     }, [cultivos]);
 

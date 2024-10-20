@@ -7,17 +7,15 @@ import { mySync } from '../../services/watermelon';
 const SyncComponent = () => {
 
     useEffect(() => {
-        // Adiciona um listener para monitorar mudanças na conectividade
         const unsubscribe = NetInfo.addEventListener(state => {
             if (state.isConnected) {
-                console.log("Conectado")
-                sincronizarDados(); // Sincroniza quando a conexão for detectada
+                console.log("conectado")
+                sincronizarDados();
             } else {
                 console.log("sem conexão")
             }
         });
 
-        // Limpa o listener quando o componente for desmontado
         return () => {
             unsubscribe();
         };

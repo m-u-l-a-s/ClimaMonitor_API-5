@@ -5,7 +5,8 @@ import { Cultivo } from '../../@types/culturaDto';
 import { BASE_URL } from "../../variables";
 import { useCultivoContext } from "../../context/CulturaContext";
 import styles from './styles';
-import { createNewCultura } from "../../services/watermelon";
+import { createNewCultura, mySync } from "../../services/watermelon";
+import { formatInTimeZone } from "date-fns-tz";
 
 const Cadastro = () => {
     const { fetchCultivos } = useCultivoContext();
@@ -34,12 +35,15 @@ const Cadastro = () => {
             temperaturas: [],
             alertasPluvi: [],
             alertasTemp: [],
+            createdAt: "",
+            deletedAt: "",
             lastUpdate: ""
         };
 
         try {
             await createNewCultura(data)
             Alert.alert("Cultura cadastrada com sucesso")
+            await mySync()
         } catch (error) {
             Alert.alert("Erro ao cadastrar cultura")
             console.error(error)
