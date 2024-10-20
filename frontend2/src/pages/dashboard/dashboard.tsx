@@ -1,4 +1,4 @@
-import React, {  } from "react";
+import React, { } from "react";
 import { Text, View } from 'react-native';
 import { CardDashbord } from "../../components/CardDashbord/cardDashbord";
 //import { Octicons, FontAwesome6 } from '@expo/vector-icons';
@@ -34,50 +34,52 @@ export default function Dashboard() {
 
 
     const route = useRoute<DashboardRouteProp>();
-    const {cultura } = route.params;
+    const { cultura } = route.params;
+
+    console.log(cultura.lastUpdate)
 
     return (
 
         <View style={style.container}>
-
             <View style={style.titulo}>
-                <Text style={style.texto1}>{cultura.nome_cultivo}</Text>
+                <Text style={style.texto1}>{cultura.lastUpdate}</Text>
+                <Text style={style.texto1}>{cultura.lastUpdate}</Text>
             </View>
             <View style={style.cards}>
                 <CardDashbord
                     title1="Temperatura Máx"
-                    valor={cultura.temperaturas.slice(-1)[0].temperatura_max.toString()}
+                    valor={cultura.temperaturas && cultura.temperaturas.length != 0 ? cultura.temperaturas.slice(-1)[0].temperatura_max.toString() : "..."}
                     IconName="sun"
                     //Icon={Octicons}
-                    showTemperatura={true}/>
+                    showTemperatura={true} />
 
                 <CardDashbord
                     title1="Temperatura Min"
-                    valor={cultura.temperaturas.slice(-1)[0].temperatura_min.toString()}
+                    valor={cultura.temperaturas && cultura.temperaturas.length != 0 ? cultura.temperaturas.slice(-1)[0].temperatura_min.toString() : "..."}
                     IconName="cloud-rain"
-                   // Icon={FontAwesome6}
-                    showTemperatura={false}
-                     />
+                    // Icon={FontAwesome6}
+                    showTemperatura={true}
+                />
 
             </View>
 
             <View style={style.cards}>
                 <CardDashbord
                     title1="Temperatura Média"
-                    valor={cultura.temperaturas.slice(-1)[0].temperatura_media.toString()}
+                    valor={cultura.temperaturas && cultura.temperaturas.length != 0 ? cultura.temperaturas.slice(-1)[0].temperatura_media.toString() : "..."}
                     IconName="sun"
                     //Icon={Octicons}
-                    showTemperatura={true}/>
+                    showTemperatura={true} />
 
 
 
                 <CardDashbord
                     title1="Chuva"
-                    valor={cultura.pluviometrias.slice(-1)[0].pluviometria.toString()}
+                    valor={cultura.pluviometrias && cultura.pluviometrias.length != 0 ? cultura.pluviometrias.slice(-1)[0].pluviometria.toString() : "..."}
                     IconName="cloud-rain"
-                   // Icon={FontAwesome6}
+                    // Icon={FontAwesome6}
                     showTemperatura={false}
-                     />
+                />
 
             </View>
         </View>
