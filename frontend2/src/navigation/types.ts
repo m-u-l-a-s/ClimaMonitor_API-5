@@ -4,6 +4,7 @@ import { Cultivo } from "../@types/culturaDto";
 export type RootStackParamList = {
     Home: undefined;
     Cadastro: undefined;
+    CadastroUsuario: undefined;
     Dashboard: {
       cultura: Cultivo
   };

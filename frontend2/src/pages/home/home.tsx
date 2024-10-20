@@ -5,7 +5,7 @@ import { style } from "./styles";
 import { Button } from "../../components/Button/button";
 import { useNavigation } from '@react-navigation/native';
 import { CardHome } from "../../components/CardHome/cardHome";
-//import { MaterialIcons } from '@expo/vector-icons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { CompositeNavigationProp, NavigatorScreenParams } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../navigation/types';
@@ -65,6 +65,10 @@ export default function Home() {
                             <CardHome
                                 // Icon={MaterialIcons}
                                 // IconName={"more-horiz"}
+                                Icon={MaterialIcons}
+                                createdAt={item.createdAt}
+                                deletedAt={item.deletedAt}
+                                IconName={"more-horiz"}
                                 _id={item._id}
                                 key={index}
                                 nome_cultivo={item.nome_cultivo}
@@ -76,8 +80,8 @@ export default function Home() {
                                 pluviometria_min={item.pluviometria_min}
                                 temperaturas={item.temperaturas}
                                 pluviometrias={item.pluviometrias}
-                                alertasTemp={[]} // Colocar os dados reais se disponíveis
-                                alertasPluvi={[]} // Colocar os dados reais se disponíveis
+                                alertasTemp={item.alertasTemp} // Colocar os dados reais se disponíveis
+                                alertasPluvi={item.alertasPluvi} // Colocar os dados reais se disponíveis
                             />
                         )}
                     />

@@ -1,6 +1,4 @@
-import { lstat } from "fs";
 import { getLastUpdate } from "./services/watermelon";
-import * as moment from "moment"
 
 export const BASE_URL = "http://192.168.15.38:3000";
 

@@ -7,12 +7,12 @@ export const style = StyleSheet.create({
         height: 150,
         borderWidth: 1,
         borderRadius: 5,
-        marginTop: 10,
+        marginTop: 5,
         alignItems: 'center',
         justifyContent: 'space-around',
         paddingHorizontal: 10,
         backgroundColor: themas.colors.fundoCards,
-        borderColor: themas.colors.bordaCards,
+        borderColor: "#326B20",
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
@@ -34,8 +34,9 @@ export const style = StyleSheet.create({
 
     temp: {
         fontSize: 30,
-        marginTop: 8,
+        marginTop: -4,
     },
+
 
 
 

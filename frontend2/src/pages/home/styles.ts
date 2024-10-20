@@ -41,11 +41,12 @@ export const style = StyleSheet.create({
         },
 
         boxBottom:{
-            height: Dimensions.get('window').height /4.6,
+            height: Dimensions.get('window').height /3.8,
             width: '100%',
             //backgroundColor:'blue',
             alignItems: 'center',
             justifyContent: 'flex-start',
+            
         
         },
 

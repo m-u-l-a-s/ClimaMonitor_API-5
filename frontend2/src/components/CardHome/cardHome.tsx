@@ -1,6 +1,6 @@
 import React, { forwardRef, LegacyRef, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList, TextInputProps, TextInput } from 'react-native';
-//import { MaterialIcons, FontAwesome, Octicons } from '@expo/vector-icons';
+import  MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { style } from './styles';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../navigation/types';
@@ -10,14 +10,12 @@ import { Cultivo } from '../../@types/culturaDto';
 
 
 
-// type IconComponent = React.ComponentType<React.ComponentProps<typeof MaterialIcons>> |
-//     React.ComponentType<React.ComponentProps<typeof FontAwesome>> |
-//     React.ComponentType<React.ComponentProps<typeof Octicons>>;
+type IconComponent = React.ComponentType<React.ComponentProps<typeof MaterialIcons>>
 
 
 type Props = {
-    //Icon: IconComponent,
-    //IconName: string,
+    Icon: IconComponent,
+    IconName: string,
     _id?: string,
     ponto_cultivo: string,
     nome_cultivo: string,
@@ -29,7 +27,7 @@ type Props = {
     pluviometrias: any[],
     alertasTemp: any[],
     alertasPluvi: any[]
-    
+     
 }
 
 
@@ -56,7 +54,7 @@ export const CardHome = (props: Cultivo) => {
 
 
    // const { Icon, IconName, nome_cultivo, temperaturas, pluviometrias } = props;
-    const { nome_cultivo, temperaturas, pluviometrias } = props;
+    const {Icon, IconName, nome_cultivo, temperaturas, pluviometrias } = props;
     const navigation = useNavigation<DashboardScreenNavigationProp>();
 
     const [modalVisible, setModalVisible] = useState(false);
@@ -75,7 +73,7 @@ export const CardHome = (props: Cultivo) => {
             </TouchableOpacity>
 
             <TouchableOpacity style={style.icon} onPress={() => setModalVisible(true)}>
-                {/* <Icon name={IconName as any} size={35} ></Icon> */}
+                <Icon name={IconName as any} size={35} ></Icon>
             </TouchableOpacity>
 
             <Modal
