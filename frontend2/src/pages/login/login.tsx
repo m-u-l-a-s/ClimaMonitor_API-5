@@ -15,6 +15,7 @@ import Octicons from 'react-native-vector-icons/Octicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {Button} from '../../components/Button/button';
 import {useNavigation, NavigationProp} from '@react-navigation/native';
+import {BASE_URL} from '../../variables';
 
 export default function Login() {
   const navigation = useNavigation<NavigationProp<any>>();
@@ -23,16 +24,43 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(true);
 
-  function getLogin() {
+  async function getLogin() {
     try {
       if (!email || !password) {
         return Alert.alert('Atenção', 'Informe os campos obrigatórios!');
       }
 
-      navigation.reset({routes: [{name: 'BottomRoutes'}]});
-      console.log('Logado com sucesso');
+      const data = {
+        username: email,
+        password: password,
+      };
+
+      const response = await fetch(`${BASE_URL}/users/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      const responseData = await response.json();
+      console.log('responseData', responseData);
+
+      if (response.status === 200) {
+        Alert.alert('Sucesso', 'Login realizado com sucesso!');
+        navigation.reset({routes: [{name: 'BottomRoutes'}]});
+      } else {
+        Alert.alert(
+          'Erro',
+          responseData.message || 'Falha ao realizar o login',
+        );
+      }
     } catch (error) {
-      console.log(error, 'Erro ao logar');
+      console.error('Erro ao realizar o login:', error);
+      Alert.alert(
+        'Erro',
+        'Ocorreu um erro ao realizar o login. Tente novamente mais tarde.',
+      );
     }
   }
 
