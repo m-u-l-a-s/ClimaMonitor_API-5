@@ -10,7 +10,7 @@ export const getTimeStamp = async () => {
     }
 
     const result = new Date(lastUpdate[0].lastUpdate)
-    console.log("timestamp: "+result)
-
+    console.log("timestamp: "+result)36
     return `?lastPulledAt=${result.getTime()/1000}`
 }
+
