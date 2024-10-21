@@ -30,7 +30,40 @@ export const style = StyleSheet.create({
         flexDirection:'row',
         marginTop:30,
 
+    },
+
+    pluvi:{
+        marginTop:30,
+        padding: 10,
+
+    },
+
+    tituloPluvi:{
+        flexDirection:"row",
+        alignItems: "center",
+        justifyContent:"space-between",
+        padding:15,
+    },
+
+    tituloTexto:{
+        fontSize:25,
+        
+    },
+
+    btn:{
+        width:"35%",
+        height:40,
+        alignItems: "center",
+        justifyContent:"center",
+        backgroundColor: '#9BC3EB',
+        borderColor: '#9BC3EB',
+        borderRadius:5,
+
+    },
+    buttonText:{
+        fontSize: 16, 
     }
+
 
 
 })
