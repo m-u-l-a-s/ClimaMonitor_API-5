@@ -1,64 +1,52 @@
-import { Dimensions, StyleSheet } from "react-native";
-import { themas } from "../../global/themes"
+import {Dimensions, StyleSheet} from 'react-native';
+import {themas} from '../../global/themes';
 
 export const style = StyleSheet.create({
+  container: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: themas.colors.branco,
+  },
 
-        container: {
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: themas.colors.branco,
+  boxTop: {
+    height: Dimensions.get('window').height / 6,
+    width: '100%',
+    //backgroundColor:'red',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 
-        },
+  titulo: {
+    fontSize: 25,
+    marginTop: 30,
+    color: 'black',
+  },
 
-        boxTop: {
-            
-            height: Dimensions.get('window').height /6,
-            width: '100%',
-            //backgroundColor:'red',
-            alignItems: 'center',
-            justifyContent: 'center',
-        },
+  boxMid: {
+    height: Dimensions.get('window').height / 1.9,
+    width: '100%',
+    //backgroundColor:'green',
+    paddingHorizontal: 37,
+    marginLeft: 30,
+  },
 
-        titulo: {
-            fontSize: 25,
-            marginTop: 30,
-        },
+  containerCard: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 
-        boxMid: {
-            height: Dimensions.get('window').height /1.9,
-            width: '100%',
-            //backgroundColor:'green',
-            paddingHorizontal: 37,
-           marginLeft:30,  
+  boxBottom: {
+    height: Dimensions.get('window').height / 3.8,
+    width: '100%',
+    //backgroundColor:'blue',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+  },
 
-        },
-
-        containerCard:{
-            alignItems: 'center',
-            justifyContent: 'center',
-           
-            
-        },
-
-        boxBottom:{
-            height: Dimensions.get('window').height /3.8,
-            width: '100%',
-            //backgroundColor:'blue',
-            alignItems: 'center',
-            justifyContent: 'flex-start',
-            
-        
-        },
-
-        btn:{
-            width: '90%',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginTop:-15,
-            
-        }
-
-
-    
-
-})
+  btn: {
+    width: '90%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: -15,
+  },
+});

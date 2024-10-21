@@ -82,12 +82,14 @@ export default function CadastroUsuario() {
           {/* <InputLogin value={nome} onChangeText={setNome} title="Nome" /> */}
 
           <InputLogin
+            placeholder="Usuário"
             value={username}
             onChangeText={setUsername}
             title="E-mail"
           />
 
           <InputLogin
+            placeholder="Senha"
             value={password}
             onChangeText={setPassword}
             title="Senha"
