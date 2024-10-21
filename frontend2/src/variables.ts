@@ -1,6 +1,6 @@
 import { getLastUpdate } from "./services/watermelon";
 
-export const BASE_URL = "http://192.168.15.36:3000";
+export const BASE_URL = "http://192.168.15.9:3000";
 
 export const getTimeStamp = async () => {
     const lastUpdate = await getLastUpdate();
@@ -10,7 +10,7 @@ export const getTimeStamp = async () => {
     }
 
     const result = new Date(lastUpdate[0].lastUpdate)
-    console.log("timestamp: "+result)36
+    console.log("timestamp: "+result)
     return `?lastPulledAt=${result.getTime()/1000}`
 }
 
