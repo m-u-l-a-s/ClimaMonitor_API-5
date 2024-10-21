@@ -142,8 +142,7 @@ export default function Dashboard() {
     <ScrollView>
       <View style={style.container}>
         <View style={style.titulo}>
-          <Text style={style.texto1}>{cultura.lastUpdate}</Text>
-          <Text style={style.texto1}>{cultura.lastUpdate}</Text>
+          <Text style={style.texto1}>{cultura.nome_cultivo}</Text>
         </View>
         <View style={style.cards}>
           <CardDashbord
