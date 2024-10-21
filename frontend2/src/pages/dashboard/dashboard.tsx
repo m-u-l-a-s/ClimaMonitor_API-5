@@ -88,46 +88,45 @@ export default function Dashboard() {
     return (
 
         <View style={style.container}>
-            <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+            <View style={style.titulo}>
+                <Text style={style.texto1}>{cultura.lastUpdate}</Text>
+                <Text style={style.texto1}>{cultura.lastUpdate}</Text>
+            </View>
+            <View style={style.cards}>
+                <CardDashbord
+                    title1="Temperatura Máx"
+                    valor={cultura.temperaturas && cultura.temperaturas.length != 0 ? cultura.temperaturas.slice(-1)[0].temperatura_max.toString() : "..."}
+                    IconName="sun"
+                    Icon={Octicons}
+                    showTemperatura={true} />
 
-                <View style={style.titulo}>
-                    <Text style={style.texto1}>{cultura.nome_cultivo}</Text>
+                <CardDashbord
+                    title1="Temperatura Min"
+                    valor={cultura.temperaturas && cultura.temperaturas.length != 0 ? cultura.temperaturas.slice(-1)[0].temperatura_min.toString() : "..."}
+                    IconName="cloud-rain"
+                    Icon={FontAwesome6}
+                    showTemperatura={true}
+                />
+
                 </View>
-                <View style={style.cards}>
-                    <CardDashbord
-                        title1="Máxima"
-                        valor={cultura.temperaturas.slice(-1)[0].temperatura_max.toString()}
-                        IconName="sun"
-                        Icon={Octicons}
-                        showTemperatura={true} />
 
-                    <CardDashbord
-                        title1="Mínima"
-                        valor={cultura.temperaturas.slice(-1)[0].temperatura_min.toString()}
-                        IconName="partly-sunny-outline"
-                        Icon={Ionicons}
-                        showTemperatura={true}
-                    />
-
-                </View>
-
-                <View style={style.cards}>
-                    <CardDashbord
-                        title1="Temp. Média"
-                        valor={cultura.temperaturas.slice(-1)[0].temperatura_media.toString()}
-                        IconName="sun"
-                        Icon={Octicons}
-                        showTemperatura={true} />
+            <View style={style.cards}>
+                <CardDashbord
+                    title1="Temperatura Média"
+                    valor={cultura.temperaturas && cultura.temperaturas.length != 0 ? cultura.temperaturas.slice(-1)[0].temperatura_media.toString() : "..."}
+                    IconName="sun"
+                    Icon={Octicons}
+                    showTemperatura={true} />
 
 
 
-                    <CardDashbord
-                        title1="Chuva"
-                        valor={cultura.pluviometrias.slice(-1)[0].pluviometria.toString()}
-                        IconName="cloud-rain"
-                        Icon={FontAwesome6}
-                        showTemperatura={false}
-                    />
+                <CardDashbord
+                    title1="Chuva"
+                    valor={cultura.pluviometrias && cultura.pluviometrias.length != 0 ? cultura.pluviometrias.slice(-1)[0].pluviometria.toString() : "..."}
+                    IconName="cloud-rain"
+                     Icon={FontAwesome6}
+                    showTemperatura={false}
+                />
 
                 </View>
 

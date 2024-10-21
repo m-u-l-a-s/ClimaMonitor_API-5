@@ -5,6 +5,8 @@ import { Cultivo } from '../../@types/culturaDto';
 import { BASE_URL } from "../../variables";
 import { useCultivoContext } from "../../context/CulturaContext";
 import styles from './styles';
+import { createNewCultura, mySync } from "../../services/watermelon";
+import { formatInTimeZone } from "date-fns-tz";
 
 const Cadastro = () => {
     const { fetchCultivos } = useCultivoContext();
@@ -33,40 +35,51 @@ const Cadastro = () => {
             temperaturas: [],
             alertasPluvi: [],
             alertasTemp: [],
+            createdAt: "",
+            deletedAt: "",
             lastUpdate: ""
         };
-    
-        console.log('dados enviados:', JSON.stringify(data));
+
         try {
-            const response = await fetch(`${BASE_URL}/cultura`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            });
-    
-            if (response.ok) {
-                const result = await response.json();
-                Alert.alert("Success", "Cadastro realizado com sucesso!");
-                await fetchCultivos();
-    
-                setLatitude("");
-                setLongitude("");
-                setnome_cultivo("");
-                setMaxTemp("");
-                setMinTemp("");
-                setMaxPluvi("");
-                setMinPluvi("");
-            } else {
-                const error = await response.json();
-                console.error('Error response:', error);
-                Alert.alert("Error", error.message || "Ocorreu um erro ao submeter o formulário.");
-            }
+            await createNewCultura(data)
+            Alert.alert("Cultura cadastrada com sucesso")
+            await mySync()
         } catch (error) {
-            console.error('Fetch error:', error);
-            Alert.alert("Error", "Não foi possível conectar com o backend.");
+            Alert.alert("Erro ao cadastrar cultura")
+            console.error(error)
         }
+    
+        // console.log('dados enviados:', JSON.stringify(data));
+        // try {
+        //     const response = await fetch(`${BASE_URL}/cultura`, {
+        //         method: 'POST',
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //         },
+        //         body: JSON.stringify(data),
+        //     });
+    
+        //     if (response.ok) {
+        //         const result = await response.json();
+        //         Alert.alert("Success", "Cadastro realizado com sucesso!");
+        //         await fetchCultivos();
+    
+        //         setLatitude("");
+        //         setLongitude("");
+        //         setnome_cultivo("");
+        //         setMaxTemp("");
+        //         setMinTemp("");
+        //         setMaxPluvi("");
+        //         setMinPluvi("");
+        //     } else {
+        //         const error = await response.json();
+        //         console.error('Error response:', error);
+        //         Alert.alert("Error", error.message || "Ocorreu um erro ao submeter o formulário.");
+        //     }
+        // } catch (error) {
+        //     console.error('Fetch error:', error);
+        //     Alert.alert("Error", "Não foi possível conectar com o backend.");
+        // }
     };
     
 
