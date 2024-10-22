@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../navigation/types';
 import { StackNavigationProp } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Cultivo } from '../../@types/culturaDto';
 
 
 
@@ -17,18 +18,7 @@ type IconComponent = React.ComponentType<React.ComponentProps<typeof MaterialIco
 type Props = {
     Icon: IconComponent,
     IconName: string,
-    _id?: string,
-    ponto_cultivo: string,
-    nome_cultivo: string,
-    temperatura_max: number,
-    pluviometria_max: number,
-    temperatura_min: number,
-    pluviometria_min: number,
-    temperaturas: any[],
-    pluviometrias: any[],
-    alertasTemp: any[],
-    alertasPluvi: any[]
-    
+    cultura : Cultivo
 }
 
 
@@ -54,7 +44,7 @@ export const CardHome = (props: Props) => {
     // }, []);
 
 
-    const { Icon, IconName, nome_cultivo, temperaturas, pluviometrias } = props;
+    const { Icon, IconName, cultura } = props;
     const navigation = useNavigation<DashboardScreenNavigationProp>();
 
     const [modalVisible, setModalVisible] = useState(false);
@@ -65,13 +55,12 @@ export const CardHome = (props: Props) => {
 
         <View style={style.container}>
             <TouchableOpacity style={style.containerTexto} onPress={() => navigation.navigate("Dashboard", {
-                  temperatura: temperaturas.slice(-1)[0].temperatura,
-                  pluviometria: pluviometrias.slice(-1)[0].pluviometria,
-                  cultura: nome_cultivo
-                  
+                  temperatura: cultura.temperaturas.slice(-1)[0].temperatura_media.toString(),
+                  pluviometria: cultura.pluviometrias.slice(-1)[0].pluviometria.toString(),
+                  cultura: cultura
             } )}>
 
-                <Text style={style.text}>{nome_cultivo}</Text>
+                <Text style={style.text}>{cultura.nome_cultivo}</Text>
 
             </TouchableOpacity>
 

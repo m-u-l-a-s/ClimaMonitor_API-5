@@ -1,0 +1,38 @@
+frontend/
+┣ .expo/
+┃ ┣ devices.json
+┃ ┗ README.md
+┣ assets/
+┃ ┣ adaptive-icon.png
+┃ ┣ favicon.png
+┃ ┣ icon.png
+┃ ┗ splash.png
+┣ node_modules/
+┣ src/
+┃ ┣ @types/
+┃ ┃ ┗ png.d.ts
+┃ ┣ assets/
+┃ ┃ ┗ logo.png
+┃ ┣ components/
+┃ ┃ ┣ Button/
+┃ ┃ ┣ CardHome/
+┃ ┃ ┣ CustomTabBar/
+┃ ┃ ┣ Header/
+┃ ┃ ┗ InputLogin/
+┃ ┣ global/
+┃ ┃ ┗ themes.tsx
+┃ ┣ pages/
+┃ ┃ ┣ dashboard/
+┃ ┃ ┣ home/
+┃ ┃ ┗ login/
+┃ ┗ routes/
+┃   ┣ bottom.routes.tsx
+┃   ┣ index.routes.tsx
+┃   ┗ styles.ts
+┣ .gitignore
+┣ app.json
+┣ App.tsx
+┣ babel.config.js
+┣ package-lock.json
+┣ package.json
+┗ tsconfig.json
