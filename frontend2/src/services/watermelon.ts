@@ -78,15 +78,8 @@ export const deleteCultura = async (id: string) => {
         await cultura.markAsDeleted();
         await cultura.destroyPermanently();
     })
-}
-
-export async function deleteAllData() {
-    const culturas = await findAllCultura()
-    await database.write(async () => {
-        culturas.map(async cultura => {
-            await cultura.markAsDeleted();
-            await cultura.destroyPermanently();
-        })
+    await fetch(`${BASE_URL}/cultura/${id}`, {
+        method: "DELETE"
     })
 }
 
@@ -100,7 +93,7 @@ export async function getLastUpdate(): Promise<CulturaModel[]> {
 export async function mySync() {
     await synchronize({
         database,
-        pullChanges: async ({ lastPulledAt }) => {
+        pullChanges: async ({ lastPulledAt }) => { 
 
             console.log(`${BASE_URL}/cultura/sync${await getTimeStamp()}`)
 

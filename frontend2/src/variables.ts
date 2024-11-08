@@ -1,6 +1,6 @@
 import {getLastUpdate} from './services/watermelon';
 
-export const BASE_URL = 'http://192.168.15.8:3000';
+export const BASE_URL = 'http://192.168.5.77:3000';
 
 export const getTimeStamp = async () => {
   const lastUpdate = await getLastUpdate();

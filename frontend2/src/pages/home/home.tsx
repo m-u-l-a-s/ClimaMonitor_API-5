@@ -63,13 +63,13 @@ export default function Home() {
                         data={cultivos}
                         renderItem={({ item, index }) => (
                             <CardHome
-                                // Icon={MaterialIcons}
-                                // IconName={"more-horiz"}
+                                
                                 Icon={MaterialIcons}
+                                IconName={"more-horiz"}
                                 createdAt={item.createdAt}
                                 deletedAt={item.deletedAt}
-                                IconName={"more-horiz"}
                                 _id={item._id}
+                                id={item.id}
                                 key={index}
                                 nome_cultivo={item.nome_cultivo}
                                 lastUpdate=""

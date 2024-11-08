@@ -1,11 +1,14 @@
 import React, { forwardRef, LegacyRef, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList, TextInputProps, TextInput } from 'react-native';
-import  MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, FlatList, TextInputProps, TextInput, Alert } from 'react-native';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { style } from './styles';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../navigation/types';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { Cultivo } from '../../@types/culturaDto';
+import { deleteCultura, mySync } from '../../services/watermelon';
+import { BASE_URL } from '../../variables';
+import { database } from '../../database';
 //import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
@@ -17,6 +20,7 @@ type Props = {
     Icon: IconComponent,
     IconName: string,
     _id?: string,
+    id: string,
     ponto_cultivo: string,
     nome_cultivo: string,
     temperatura_max: number,
@@ -27,7 +31,7 @@ type Props = {
     pluviometrias: any[],
     alertasTemp: any[],
     alertasPluvi: any[]
-     
+
 }
 
 
@@ -53,20 +57,65 @@ export const CardHome = (props: Cultivo) => {
     // }, []);
 
 
-   // const { Icon, IconName, nome_cultivo, temperaturas, pluviometrias } = props;
-    const {Icon, IconName, nome_cultivo, temperaturas, pluviometrias } = props;
+    // const { Icon, IconName, nome_cultivo, temperaturas, pluviometrias } = props;
+    const { Icon, IconName, nome_cultivo, id, temperaturas, pluviometrias } = props;
+
     const navigation = useNavigation<DashboardScreenNavigationProp>();
 
     const [modalVisible, setModalVisible] = useState(false);
     // console.log(props)
+
+    
+
+    const handleDelete = async () => {
+        setModalVisible(false); // Fecha o modal
+        if (id) {
+            try {
+            //     //vai deletar a cultura no backend
+            //     await deleteCulturaBackend(id); 
+            // console.log("Cultura excluída do MongoDB");
+
+            // Vai  Deletar no WatermelonDB
+            await deleteCultura(id); 
+            Alert.alert("Cultura excluída com sucesso!", id);
+            } catch (error) {
+                console.log("erro pego", error);
+                if (error instanceof Error) {
+                    Alert.alert("Erro ao excluir cultura:", error.message);
+                } else {
+                    Alert.alert("Erro desconhecido ao excluir cultura.");
+                }
+            }
+        } else {
+            Alert.alert("Erro: ID da cultura não encontrado.");
+        }
+    };
+
+
+    const deleteCulturaBackend = async (id: string) => {
+        try {
+            const response = await fetch(`${BASE_URL}/cultura/${id}`, {
+                method: 'DELETE',
+            });
+    
+            if (!response.ok) {
+                throw new Error(`Erro ${response.status}: Cultura não encontrada ou erro no servidor.`);
+            }
+            
+            console.log("Cultura removida no backend com sucesso.", id);
+        } catch (error) {
+            console.error("Erro ao remover cultura no backend:", error);
+            throw error; 
+        }
+    };
 
 
     return (
 
         <View style={style.container}>
             <TouchableOpacity style={style.containerTexto} onPress={() => navigation.navigate("Dashboard", {
-                  cultura: props
-            } )}>
+                cultura: props
+            })}>
 
                 <Text style={style.text}>{nome_cultivo}</Text>
 
@@ -77,7 +126,7 @@ export const CardHome = (props: Cultivo) => {
             </TouchableOpacity>
 
             <Modal
-                animationType="slide"                transparent={true}
+                animationType="slide" transparent={true}
                 visible={modalVisible}
                 onRequestClose={() => setModalVisible(false)}
             >
@@ -89,7 +138,7 @@ export const CardHome = (props: Cultivo) => {
                         <TouchableOpacity onPress={() => { setModalVisible(false); navigation.navigate('Rota2'); }}>
                             <Text style={style.modalText}>Editar</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => { setModalVisible(false); navigation.navigate('Excluir'); }}>
+                        <TouchableOpacity onPress={handleDelete}>
                             <Text style={style.modalText}>Excluir</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => setModalVisible(false)}>
