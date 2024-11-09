@@ -1,24 +1,20 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {useState} from 'react';
-import {
-  View,
-  Text,
-  Image,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
+import {View, Text, Image, TouchableOpacity, Alert} from 'react-native';
 import {style} from './styles';
 import Logo from '../../assets/logo.png';
-import {themas} from '../../global/themes';
 import {InputLogin} from '../../components/InputLogin/inputLogin';
 import Octicons from 'react-native-vector-icons/Octicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {Button} from '../../components/Button/button';
-import {useNavigation, NavigationProp} from '@react-navigation/native';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {BASE_URL} from '../../variables';
+import {useAuth} from '../../context/AuthContext';
+import {RootStackParamList} from '../../navigation/types';
 
 export default function Login() {
-  const navigation = useNavigation<NavigationProp<any>>();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const {setUser} = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -44,9 +40,10 @@ export default function Login() {
       });
 
       const responseData = await response.json();
-      console.log('responseData', responseData);
 
       if (response.status === 200) {
+        setUser(responseData.userId, responseData.token);
+
         Alert.alert('Sucesso', 'Login realizado com sucesso!');
         navigation.reset({routes: [{name: 'BottomRoutes'}]});
       } else {
@@ -92,7 +89,7 @@ export default function Login() {
           onIconRigthPress={() => setShowPassword(!showPassword)}
         />
 
-        <Button text="Entrar" onPress={getLogin}></Button>
+        <Button text="Entrar" onPress={getLogin} />
       </View>
 
       <View style={style.textoRodape}>
@@ -100,10 +97,7 @@ export default function Login() {
 
         <TouchableOpacity
           onPress={() => navigation.navigate('CadastroUsuario')}>
-          <Text style={{color: themas.colors.btnAzul, fontSize: 18}}>
-            {' '}
-            Clique aqui!
-          </Text>
+          <Text style={{color: '#007BFF', fontSize: 18}}> Clique aqui!</Text>
         </TouchableOpacity>
       </View>
     </View>

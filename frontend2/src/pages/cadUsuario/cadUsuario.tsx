@@ -19,24 +19,20 @@ import {BASE_URL} from '../../variables';
 
 export default function CadastroUsuario() {
   const navigation = useNavigation<NavigationProp<any>>();
-  //const [nome, setNome] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   function getCadastrar() {
     try {
-      // Verifica se os campos estão preenchidos
       if (!username || !password) {
         return Alert.alert('Atenção', 'Preencha todos os campos obrigatórios!');
       }
 
-      // Cria um objeto com os dados do cadastro
       const data = {
         username: username,
         password: password,
       };
 
-      // Faz a requisição POST para o backend
       fetch(`${BASE_URL}/users`, {
         method: 'POST',
         headers: {
@@ -49,9 +45,8 @@ export default function CadastroUsuario() {
             setUsername('');
             setPassword('');
             Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
-            // navigation.reset({routes: [{name: 'BottomRoutes'}]});
+            navigation.reset({routes: [{name: 'Login'}]});
           } else {
-            // Exibe mensagem de erro caso algo dê errado
             setUsername('');
             setPassword('');
             Alert.alert('Erro', 'Falha ao realizar o cadastro');

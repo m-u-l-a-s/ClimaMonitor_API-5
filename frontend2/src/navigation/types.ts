@@ -1,14 +1,14 @@
-import { Cultivo } from "../@types/culturaDto";
+import {Cultivo} from '../@types/culturaDto';
 
-// src/navigation/types.ts
 export type RootStackParamList = {
-    Home: undefined;
-    Cadastro: undefined;
-    CadastroUsuario: undefined;
-    Notificacao: undefined;
-    Dashboard: {
-      cultura: Cultivo
+  Login: undefined;
+  CadastroUsuario: undefined;
+  BottomRoutes: undefined;
+  Home: undefined;
+  Dashboard: {
+    cultura: Cultivo;
   };
-    // Adicionar outras telas aqui
-  };
-  
+  Cadastro: undefined;
+  Profile: undefined;
+  Notificacao: undefined;
+};
