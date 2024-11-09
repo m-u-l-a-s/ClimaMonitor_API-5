@@ -1,18 +1,25 @@
 import React, { useState } from "react";
 import { TouchableHighlightProps, TouchableOpacity, Text, View, Modal } from 'react-native';
 import { style } from "./styles";
+import { NavigationProp } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "../../navigation/types";
 
 type Props = TouchableHighlightProps & {
     text: string;
+    // navigation: NavigationProp<any>; 
 }
 
+type NotificacaoScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Notificacao'>;
 
 export function Header() {
     const [modalVisible, setModalVisible] = useState(false);
 
-    return (
+    const navigation = useNavigation<NotificacaoScreenNavigationProp>();
 
+    return (
         <View style={style.container}>
             <View style={style.usuario}>
                 <TouchableOpacity onPress={() => setModalVisible(true)}>
@@ -41,7 +48,7 @@ export function Header() {
             </Modal>
 
             <View style={style.notificacao}>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate("Notificacao")}>
                     <SimpleLineIcons name="bell" style={{ fontSize: 30 }} />
                 </TouchableOpacity>
 

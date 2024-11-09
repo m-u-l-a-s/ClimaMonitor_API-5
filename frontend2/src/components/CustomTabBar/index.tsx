@@ -5,10 +5,6 @@ import { NavigationProp } from '@react-navigation/native';
 import  SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 
-
-
-
-
 type Props = {
     navigation: NavigationProp<any>; 
   };
@@ -26,8 +22,6 @@ type Props = {
             </TouchableOpacity>
 
           </View>
-
-        
 
     )
 }
