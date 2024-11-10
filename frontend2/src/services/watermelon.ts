@@ -1,14 +1,11 @@
 import {synchronize} from '@nozbe/watermelondb/sync';
 import {Collection, Model, Q} from '@nozbe/watermelondb';
-import {Cultivo, Pluviometria, Temperatura} from '../@types/culturaDto';
+import {Cultivo} from '../@types/culturaDto';
 import {database} from '../database';
 import CulturaModel from '../models/Cultura';
 import {BASE_URL, getTimeStamp} from '../variables';
 import {formatInTimeZone} from 'date-fns-tz';
-import axios, {Axios} from 'axios';
-import * as moment from 'moment';
-import {parseISO} from 'date-fns';
-import CulturasModel from '../models/Cultura';
+import axios from 'axios';
 import {NotificacaoType} from '../@types/notificacaoDto';
 
 export const getCulturas = async (): Promise<Collection<CulturaModel>> => {
@@ -19,9 +16,9 @@ export const findOneCultura = async (id: string): Promise<CulturaModel> => {
   return (await getCulturas()).find(id);
 };
 
-export const findAllCultura = async (): Promise<CulturaModel[]> => {
+export const findAllCulturaById = async (userId: string): Promise<CulturaModel[]> => {
   const cultura = await getCulturas();
-  const allCulturas = await cultura.query().fetch();
+  const allCulturas = await cultura.query(Q.where("userId", userId))
   return allCulturas;
 };
 
@@ -91,15 +88,19 @@ export const deleteCultura = async (id: string) => {
   });
 };
 
-export async function getLastUpdate(): Promise<CulturaModel[]> {
+export async function getLastUpdate(userId : string): Promise<CulturaModel[]> {
   const cultura = await getCulturas();
   const lastUpdate = await cultura
-    .query(Q.sortBy('lastUpdate', Q.desc), Q.take(1))
+    .query(
+      Q.sortBy('lastUpdate', Q.desc),
+      Q.take(1),
+      Q.where("userId", userId)
+    )
     .fetch();
-  return lastUpdate;
+  return lastUpdate ;
 }
 
-export async function getAlertasDoDia() {
+export async function getAlertasDoDia(userId : string) {
   const notificacoes: NotificacaoType[] = [];
   const data = new Date();
   data.setDate(data.getDay()-1)
@@ -108,7 +109,7 @@ export async function getAlertasDoDia() {
 
   console.log(ontem);
 
-  const culturas = await findAllCultura();
+  const culturas = await findAllCulturaById(userId);
 
   for (const cultura of culturas) {
     let descTemp = '';
@@ -164,14 +165,14 @@ export async function getAlertasDoDia() {
   return notificacoes;
 }
 
-export async function mySync() {
+export async function mySync(userId: string) {
   await synchronize({
     database,
     pullChanges: async ({lastPulledAt}) => {
-      console.log(`${BASE_URL}/cultura/sync${await getTimeStamp()}`);
+      console.log(`${BASE_URL}/cultura/sync${await getTimeStamp(userId)}`);
 
       const response = await fetch(
-        `${BASE_URL}/cultura/sync${await getTimeStamp()}`,
+        `${BASE_URL}/cultura/sync/${userId}/${await getTimeStamp(userId)}`,
       );
       console.log(response);
 

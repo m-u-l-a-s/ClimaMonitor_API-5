@@ -22,13 +22,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({children}) => {
   const setUser = (id: string, token: string) => {
     setUserId(id);
     setToken(token);
-    AsyncStorage.setItem('@user_token', token);
+    // AsyncStorage.setItem('@user_token', token);
   };
 
   const logout = () => {
     setUserId(null);
     setToken(null);
-    AsyncStorage.removeItem('@user_token');
+    // AsyncStorage.removeItem('@user_token');
   };
 
   return (

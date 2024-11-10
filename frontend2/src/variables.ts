@@ -1,13 +1,13 @@
 import {getLastUpdate} from './services/watermelon';
 
 // Casa
-export const BASE_URL = 'http://192.168.15.8:3000';
+export const BASE_URL = 'http://192.168.0.25:3000';
 // FATEC
 // export const BASE_URL = 'http://192.168.5.83:3000';
 // export const BASE_URL = 'http://127.0.0.1:3000';
 
-export const getTimeStamp = async () => {
-  const lastUpdate = await getLastUpdate();
+export const getTimeStamp = async (userId : string) => {
+  const lastUpdate = await getLastUpdate(userId);
 
   if (lastUpdate.length == 0) {
     return ``;

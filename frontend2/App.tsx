@@ -13,7 +13,6 @@ export default function App() {
         <CultivoProvider>
           <NavigationContainer>
             <Routes />
-            <SyncComponent />
           </NavigationContainer>
         </CultivoProvider>
       </AuthProvider>

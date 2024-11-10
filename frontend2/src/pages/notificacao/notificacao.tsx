@@ -5,17 +5,21 @@ import { style } from "./styles";
 import { CardNotificacao } from "../../components/Notificacao/cardNotificacao";
 import { NotificacaoType } from "../../@types/notificacaoDto";
 import { getAlertasDoDia } from "../../services/watermelon";
+import { useAuth } from "../../context/AuthContext";
 
 
 export default function Notificacao() {
     const [notificacoes, setNotificacoes] = useState<NotificacaoType[]>()
     const [alerta, setAlerta] = useState([]);
+    const { userId } = useAuth()
 
     useEffect(() => {
-        getAlertasDoDia().then(resp => {
-            setNotificacoes(resp)
-            console.log(resp)
-        })
+        if (userId) {
+            getAlertasDoDia(userId).then(resp => {
+                setNotificacoes(resp)
+                console.log(resp)
+            })
+        }
     }, [])
 
     return (

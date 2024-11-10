@@ -19,7 +19,7 @@ export default class CulturasModel extends Model {
     @field("lastUpdate") lastUpdate!: string;
     @field("createdAt") createdAt!: string;
     @field("deletedAt") deletedAt!: string;
-
+    @field("userId") userId !: string;
 }
 
 const satinezeJson = (data : any) => typeof data == "string" ? JSON.parse(data) : data

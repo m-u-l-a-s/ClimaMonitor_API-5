@@ -1,24 +1,26 @@
 // src/pages/home/home.tsx
-import React, {useEffect, useState} from 'react';
-import {FlatList, Text, View} from 'react-native';
-import {style} from './styles';
-import {Button} from '../../components/Button/button';
-import {NavigationProp, useNavigation} from '@react-navigation/native';
-import {CardHome} from '../../components/CardHome/cardHome';
+import React, { useEffect, useState } from 'react';
+import { FlatList, Text, View } from 'react-native';
+import { style } from './styles';
+import { Button } from '../../components/Button/button';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { CardHome } from '../../components/CardHome/cardHome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {
   CompositeNavigationProp,
   NavigatorScreenParams,
 } from '@react-navigation/native';
-import {StackNavigationProp} from '@react-navigation/stack';
-import {RootStackParamList} from '../../navigation/types';
-import {Cultivo} from '../../@types/culturaDto';
-import {useCultivoContext} from '../../context/CulturaContext';
-import {withObservables} from '@nozbe/watermelondb/react';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../../navigation/types';
+import { Cultivo } from '../../@types/culturaDto';
+import { useCultivoContext } from '../../context/CulturaContext';
+import { withObservables } from '@nozbe/watermelondb/react';
 import CulturaModel from '../../models/Cultura';
-import {findAllCultura, mySync} from '../../services/watermelon';
+import { findAllCulturaById, mySync } from '../../services/watermelon';
+import SyncComponent from '../../components/syncComponent/syncComponent';
+import { useAuth } from '../../context/AuthContext';
 
-const enhance = withObservables(['Cultura'], ({Cultura}) => ({
+const enhance = withObservables(['Cultura'], ({ Cultura }) => ({
   Cultura,
 }));
 
@@ -27,12 +29,16 @@ const enhanceCulturas = enhance(CardHome);
 export default function Home() {
   // const { cultivos, fetchCultivos } = useCultivoContext()
 
+
+  const { userId } = useAuth()
   const [cultivos, setCulturas] = useState<CulturaModel[]>([]);
 
   const fetchCulturas = async () => {
     try {
-      const allCulturas = await findAllCultura();
-      setCulturas(allCulturas);
+      if (userId) {
+        const allCulturas = await findAllCulturaById(userId);
+        setCulturas(allCulturas);
+      }
     } catch (error) {
       console.error('Erro ao buscar as culturas:', error);
     }
@@ -48,6 +54,7 @@ export default function Home() {
 
   return (
     <View style={style.container}>
+      <SyncComponent />
       <View style={style.boxTop}>
         <Text style={style.titulo}>Pontos de Monitoramento</Text>
       </View>
@@ -55,7 +62,7 @@ export default function Home() {
         <View style={style.containerCard}>
           <FlatList
             data={cultivos}
-            renderItem={({item, index}) => (
+            renderItem={({ item, index }) => (
               <CardHome
                 Icon={MaterialIcons}
                 IconName={'more-horiz'}

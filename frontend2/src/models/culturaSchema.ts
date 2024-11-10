@@ -16,7 +16,8 @@ export const oldculturaSchema = tableSchema({
         {name: "alertasPluvi", type: "string"},
         {name: "lastUpdate", type: "string"},
         {name: "createdAt", type: "string"},
-        {name: "deletedAt", type: "string"}
+        {name: "deletedAt", type: "string"},
+        {name: "userId", type: "string"}
     ]
 })
 
