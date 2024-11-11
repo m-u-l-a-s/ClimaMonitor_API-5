@@ -1,56 +1,29 @@
 // src/pages/home/home.tsx
-import React, { useEffect, useState } from 'react';
-import { FlatList, Text, View } from 'react-native';
-import { style } from './styles';
-import { Button } from '../../components/Button/button';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { CardHome } from '../../components/CardHome/cardHome';
+import React, {useEffect} from 'react';
+import {FlatList, Text, View} from 'react-native';
+import {style} from './styles';
+import {CardHome} from '../../components/CardHome/cardHome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {
-  CompositeNavigationProp,
-  NavigatorScreenParams,
-} from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../../navigation/types';
-import { Cultivo } from '../../@types/culturaDto';
-import { useCultivoContext } from '../../context/CulturaContext';
-import { withObservables } from '@nozbe/watermelondb/react';
-import CulturaModel from '../../models/Cultura';
-import { findAllCulturaById, mySync } from '../../services/watermelon';
+
+import {useCultivoContext} from '../../context/CulturaContext';
 import SyncComponent from '../../components/syncComponent/syncComponent';
-import { useAuth } from '../../context/AuthContext';
+import {useAuth} from '../../context/AuthContext';
 
-const enhance = withObservables(['Cultura'], ({ Cultura }) => ({
-  Cultura,
-}));
+// const enhance = withObservables(['Cultura'], ({Cultura}) => ({
+//   Cultura,
+// }));
 
-const enhanceCulturas = enhance(CardHome);
+// const enhanceCulturas = enhance(CardHome);
 
 export default function Home() {
-  // const { cultivos, fetchCultivos } = useCultivoContext()
-
-
-  const { userId } = useAuth()
-  const [cultivos, setCulturas] = useState<CulturaModel[]>([]);
-
-  const fetchCulturas = async () => {
-    try {
-      if (userId) {
-        const allCulturas = await findAllCulturaById(userId);
-        setCulturas(allCulturas);
-      }
-    } catch (error) {
-      console.error('Erro ao buscar as culturas:', error);
-    }
-  };
+  const {userId} = useAuth();
+  const {cultivos, fetchCultivos} = useCultivoContext();
 
   useEffect(() => {
-    fetchCulturas();
-  }, [cultivos]);
-
-  // useEffect(() => {
-  //     fetchCultivos()
-  // }, []);
+    if (userId) {
+      fetchCultivos(userId);
+    }
+  }, [userId, fetchCultivos]);
 
   return (
     <View style={style.container}>
@@ -62,14 +35,13 @@ export default function Home() {
         <View style={style.containerCard}>
           <FlatList
             data={cultivos}
-            renderItem={({ item, index }) => (
+            renderItem={({item, index}) => (
               <CardHome
                 Icon={MaterialIcons}
                 IconName={'more-horiz'}
                 createdAt={item.createdAt}
                 deletedAt={item.deletedAt}
                 _id={item._id}
-                id={item.id}
                 key={index}
                 nome_cultivo={item.nome_cultivo}
                 lastUpdate=""

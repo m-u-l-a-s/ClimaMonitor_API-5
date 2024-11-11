@@ -27,7 +27,7 @@ export default function Login() {
       }
 
       const data = {
-        username: email,
+        email: email,
         password: password,
       };
 
@@ -38,7 +38,6 @@ export default function Login() {
         },
         body: JSON.stringify(data),
       });
-      
 
       const responseData = await response.json();
 

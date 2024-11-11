@@ -1,17 +1,8 @@
 import React, {useState} from 'react';
-import {
-  View,
-  Text,
-  Image,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
+import {View, Text, Image, Alert} from 'react-native';
 import {style} from './styles';
 import Logo from '../../assets/logo.png';
-import {themas} from '../../global/themes';
 import {InputLogin} from '../../components/InputLogin/inputLogin';
-import Octicons from 'react-native-vector-icons/Octicons';
 import {Button} from '../../components/Button/button';
 import {useNavigation, NavigationProp} from '@react-navigation/native';
 import {ScrollView} from 'react-native';
@@ -19,18 +10,22 @@ import {BASE_URL} from '../../variables';
 
 export default function CadastroUsuario() {
   const navigation = useNavigation<NavigationProp<any>>();
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
+  const [lastName, setlastName] = useState('');
   const [password, setPassword] = useState('');
 
   function getCadastrar() {
     try {
-      if (!username || !password) {
+      if (!email || !name || !lastName || !password) {
         return Alert.alert('Atenção', 'Preencha todos os campos obrigatórios!');
       }
 
       const data = {
-        username: username,
-        password: password,
+        email,
+        name,
+        lastName,
+        password,
       };
 
       fetch(`${BASE_URL}/users`, {
@@ -42,12 +37,16 @@ export default function CadastroUsuario() {
       })
         .then(response => {
           if (response.status === 201) {
-            setUsername('');
+            setEmail('');
+            setName('');
+            setlastName('');
             setPassword('');
             Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
             navigation.reset({routes: [{name: 'Login'}]});
           } else {
-            setUsername('');
+            setEmail('');
+            setName('');
+            setlastName('');
             setPassword('');
             Alert.alert('Erro', 'Falha ao realizar o cadastro');
           }
@@ -74,23 +73,35 @@ export default function CadastroUsuario() {
         </View>
 
         <View style={style.boxMid}>
-          {/* <InputLogin value={nome} onChangeText={setNome} title="Nome" /> */}
+          <InputLogin
+            placeholder="Nome"
+            value={name}
+            onChangeText={setName}
+            title="name"
+          />
+
+          <InputLogin
+            placeholder="Sobrenome"
+            value={lastName}
+            onChangeText={setlastName}
+            title="lastName"
+          />
 
           <InputLogin
             placeholder="Usuário"
-            value={username}
-            onChangeText={setUsername}
-            title="E-mail"
+            value={email}
+            onChangeText={setEmail}
+            title="e-mail"
           />
 
           <InputLogin
             placeholder="Senha"
             value={password}
             onChangeText={setPassword}
-            title="Senha"
+            title="password"
           />
 
-          <Button text="Cadastrar" onPress={getCadastrar}></Button>
+          <Button text="Cadastrar" onPress={getCadastrar} />
         </View>
       </View>
     </ScrollView>

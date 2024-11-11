@@ -1,202 +1,202 @@
-import {synchronize} from '@nozbe/watermelondb/sync';
-import {Collection, Model, Q} from '@nozbe/watermelondb';
-import {Cultivo} from '../@types/culturaDto';
-import {database} from '../database';
-import CulturaModel from '../models/Cultura';
-import {BASE_URL, getTimeStamp} from '../variables';
-import {formatInTimeZone} from 'date-fns-tz';
-import axios from 'axios';
-import {NotificacaoType} from '../@types/notificacaoDto';
+// import {synchronize} from '@nozbe/watermelondb/sync';
+// import {Collection, Model, Q} from '@nozbe/watermelondb';
+// import {Cultivo} from '../@types/culturaDto';
+// import {database} from '../database';
+// import CulturaModel from '../models/Cultura';
+// import {BASE_URL, getTimeStamp} from '../variables';
+// import {formatInTimeZone} from 'date-fns-tz';
+// import axios from 'axios';
+// import {NotificacaoType} from '../@types/notificacaoDto';
 
-export const getCulturas = async (): Promise<Collection<CulturaModel>> => {
-  return await database.get('Cultura');
-};
+// export const getCulturas = async (): Promise<Collection<CulturaModel>> => {
+//   return await database.get('Cultura');
+// };
 
-export const findOneCultura = async (id: string): Promise<CulturaModel> => {
-  return (await getCulturas()).find(id);
-};
+// export const findOneCultura = async (id: string): Promise<CulturaModel> => {
+//   return (await getCulturas()).find(id);
+// };
 
-export const findAllCulturaById = async (userId: string): Promise<CulturaModel[]> => {
-  const cultura = await getCulturas();
-  const allCulturas = await cultura.query(Q.where("userId", userId))
-  return allCulturas;
-};
+// export const findAllCulturaById = async (userId: string): Promise<CulturaModel[]> => {
+//   const cultura = await getCulturas();
+//   const allCulturas = await cultura.query(Q.where("userId", userId))
+//   return allCulturas;
+// };
 
-export const createNewCultura = async (culturaDto: Cultivo) => {
-  try {
-    await database.write(async () => {
-      const culturaCollection = database.get<CulturaModel>('Cultura');
-      const time = formatInTimeZone(
-        new Date(),
-        'America/Sao_Paulo',
-        "yyyy-MM-dd'T'HH:mm:ssXXX",
-      );
-      await culturaCollection.create(cultura => {
-        cultura._id = '';
-        cultura.ponto_cultivo = culturaDto.ponto_cultivo;
-        cultura.nome_cultivo = culturaDto.nome_cultivo;
-        cultura.temperatura_max = culturaDto.temperatura_max;
-        cultura.pluviometria_max = culturaDto.pluviometria_max;
-        cultura.temperatura_min = culturaDto.temperatura_min;
-        cultura.pluviometria_min = culturaDto.pluviometria_min;
-        cultura.temperaturas = culturaDto.temperaturas;
-        cultura.pluviometrias = culturaDto.pluviometrias;
-        cultura.alertasTemp = culturaDto.alertasTemp;
-        cultura.alertasPluvi = culturaDto.alertasPluvi;
-        cultura.lastUpdate = time;
-        cultura.createdAt = time;
-        cultura.deletedAt = '';
-      });
-    });
-  } catch (error) {
-    console.error('Erro ao criar cultura:', error);
-  }
-};
+// export const createNewCultura = async (culturaDto: Cultivo) => {
+//   try {
+//     await database.write(async () => {
+//       const culturaCollection = database.get<CulturaModel>('Cultura');
+//       const time = formatInTimeZone(
+//         new Date(),
+//         'America/Sao_Paulo',
+//         "yyyy-MM-dd'T'HH:mm:ssXXX",
+//       );
+//       await culturaCollection.create(cultura => {
+//         cultura._id = '';
+//         cultura.ponto_cultivo = culturaDto.ponto_cultivo;
+//         cultura.nome_cultivo = culturaDto.nome_cultivo;
+//         cultura.temperatura_max = culturaDto.temperatura_max;
+//         cultura.pluviometria_max = culturaDto.pluviometria_max;
+//         cultura.temperatura_min = culturaDto.temperatura_min;
+//         cultura.pluviometria_min = culturaDto.pluviometria_min;
+//         cultura.temperaturas = culturaDto.temperaturas;
+//         cultura.pluviometrias = culturaDto.pluviometrias;
+//         cultura.alertasTemp = culturaDto.alertasTemp;
+//         cultura.alertasPluvi = culturaDto.alertasPluvi;
+//         cultura.lastUpdate = time;
+//         cultura.createdAt = time;
+//         cultura.deletedAt = '';
+//       });
+//     });
+//   } catch (error) {
+//     console.error('Erro ao criar cultura:', error);
+//   }
+// };
 
-export const updateCultura = async (culturaDto: Cultivo, id: string) => {
-  const cultivo = await findOneCultura(id);
-  const time = formatInTimeZone(
-    new Date(),
-    'America/Sao_Paulo',
-    "yyyy-MM-dd'T'HH:mm:ssXXX",
-  );
+// export const updateCultura = async (culturaDto: Cultivo, id: string) => {
+//   const cultivo = await findOneCultura(id);
+//   const time = formatInTimeZone(
+//     new Date(),
+//     'America/Sao_Paulo',
+//     "yyyy-MM-dd'T'HH:mm:ssXXX",
+//   );
 
-  await database.write(async () => {
-    await cultivo.update(updateCultura => {
-      (updateCultura.ponto_cultivo = culturaDto.ponto_cultivo),
-        (updateCultura.nome_cultivo = culturaDto.nome_cultivo),
-        (updateCultura.temperatura_max = culturaDto.temperatura_max),
-        (updateCultura.temperatura_min = culturaDto.temperatura_min),
-        (updateCultura.pluviometria_max = culturaDto.pluviometria_max),
-        (updateCultura.pluviometria_min = culturaDto.pluviometria_min),
-        (updateCultura.pluviometrias = culturaDto.pluviometrias),
-        (updateCultura.lastUpdate = time),
-        (updateCultura.alertasPluvi = culturaDto.alertasPluvi),
-        (updateCultura.alertasTemp = culturaDto.alertasTemp);
-    });
-  });
-};
+//   await database.write(async () => {
+//     await cultivo.update(updateCultura => {
+//       (updateCultura.ponto_cultivo = culturaDto.ponto_cultivo),
+//         (updateCultura.nome_cultivo = culturaDto.nome_cultivo),
+//         (updateCultura.temperatura_max = culturaDto.temperatura_max),
+//         (updateCultura.temperatura_min = culturaDto.temperatura_min),
+//         (updateCultura.pluviometria_max = culturaDto.pluviometria_max),
+//         (updateCultura.pluviometria_min = culturaDto.pluviometria_min),
+//         (updateCultura.pluviometrias = culturaDto.pluviometrias),
+//         (updateCultura.lastUpdate = time),
+//         (updateCultura.alertasPluvi = culturaDto.alertasPluvi),
+//         (updateCultura.alertasTemp = culturaDto.alertasTemp);
+//     });
+//   });
+// };
 
-export const deleteCultura = async (id: string) => {
-  const cultura = await findOneCultura(id);
-  await database.write(async () => {
-    await cultura.markAsDeleted();
-    await cultura.destroyPermanently();
-  });
-  await fetch(`${BASE_URL}/cultura/${id}`, {
-    method: 'DELETE',
-  });
-};
+// export const deleteCultura = async (id: string) => {
+//   const cultura = await findOneCultura(id);
+//   await database.write(async () => {
+//     await cultura.markAsDeleted();
+//     await cultura.destroyPermanently();
+//   });
+//   await fetch(`${BASE_URL}/cultura/${id}`, {
+//     method: 'DELETE',
+//   });
+// };
 
-export async function getLastUpdate(userId : string): Promise<CulturaModel[]> {
-  const cultura = await getCulturas();
-  const lastUpdate = await cultura
-    .query(
-      Q.sortBy('lastUpdate', Q.desc),
-      Q.take(1),
-      Q.where("userId", userId)
-    )
-    .fetch();
-  return lastUpdate ;
-}
+// export async function getLastUpdate(userId : string): Promise<CulturaModel[]> {
+//   const cultura = await getCulturas();
+//   const lastUpdate = await cultura
+//     .query(
+//       Q.sortBy('lastUpdate', Q.desc),
+//       Q.take(1),
+//       Q.where("userId", userId)
+//     )
+//     .fetch();
+//   return lastUpdate ;
+// }
 
-export async function getAlertasDoDia(userId : string) {
-  const notificacoes: NotificacaoType[] = [];
-  const data = new Date();
-  data.setDate(data.getDay()-1)
+// export async function getAlertasDoDia(userId : string) {
+//   const notificacoes: NotificacaoType[] = [];
+//   const data = new Date();
+//   data.setDate(data.getDay()-1)
 
-  const ontem = formatInTimeZone(data, 'America/Sao_Paulo', 'yyyy-MM-dd');
+//   const ontem = formatInTimeZone(data, 'America/Sao_Paulo', 'yyyy-MM-dd');
 
-  console.log(ontem);
+//   console.log(ontem);
 
-  const culturas = await findAllCulturaById(userId);
+//   const culturas = await findAllCulturaById(userId);
 
-  for (const cultura of culturas) {
-    let descTemp = '';
-    let descPluvi = '';
-    if (cultura.alertasPluvi == undefined) {
-      console.log('alerta pluviometria undefined');
-    } 
-    else if (cultura.alertasPluvi.length != 0){
-      const alertaPluviometria = cultura.alertasPluvi.at(-1);
+//   for (const cultura of culturas) {
+//     let descTemp = '';
+//     let descPluvi = '';
+//     if (cultura.alertasPluvi == undefined) {
+//       console.log('alerta pluviometria undefined');
+//     }
+//     else if (cultura.alertasPluvi.length != 0){
+//       const alertaPluviometria = cultura.alertasPluvi.at(-1);
 
-        console.log("último alerta de pluviometria: "+alertaPluviometria?.data)
+//         console.log("último alerta de pluviometria: "+alertaPluviometria?.data)
 
-      if (alertaPluviometria?.data == ontem) {
-        if (cultura.pluviometria_max < alertaPluviometria.pluviometria) {
-          descPluvi = `A pluviometria excedeu a máxima de ${cultura.pluviometria_max}mm.`;
-        }
+//       if (alertaPluviometria?.data == ontem) {
+//         if (cultura.pluviometria_max < alertaPluviometria.pluviometria) {
+//           descPluvi = `A pluviometria excedeu a máxima de ${cultura.pluviometria_max}mm.`;
+//         }
 
-        if (cultura.pluviometria_min > alertaPluviometria.pluviometria) {
-          descPluvi = `A pluviometria ficou abaixo do limite mínimo de ${cultura.pluviometria_min}mm.`;
-        }
-      }
-    }
+//         if (cultura.pluviometria_min > alertaPluviometria.pluviometria) {
+//           descPluvi = `A pluviometria ficou abaixo do limite mínimo de ${cultura.pluviometria_min}mm.`;
+//         }
+//       }
+//     }
 
-    if (cultura.alertasTemp == undefined) {
-      console.log('alerta temperatura undefined');
-    } 
-    else if (cultura.alertasTemp.length != 0){
-      const alertaTemperatura = cultura.alertasTemp.at(-1);
+//     if (cultura.alertasTemp == undefined) {
+//       console.log('alerta temperatura undefined');
+//     }
+//     else if (cultura.alertasTemp.length != 0){
+//       const alertaTemperatura = cultura.alertasTemp.at(-1);
 
-      console.log('Ultimo alerta de temperatura: ' + alertaTemperatura?.data);
+//       console.log('Ultimo alerta de temperatura: ' + alertaTemperatura?.data);
 
-      if (alertaTemperatura?.data == ontem) {
-        if (cultura.temperatura_max < alertaTemperatura.temperatura_max) {
-          descPluvi = `A temperatura excedeu a máxima de ${cultura.temperatura_max}°C.`;
-        }
+//       if (alertaTemperatura?.data == ontem) {
+//         if (cultura.temperatura_max < alertaTemperatura.temperatura_max) {
+//           descPluvi = `A temperatura excedeu a máxima de ${cultura.temperatura_max}°C.`;
+//         }
 
-        if (cultura.temperatura_min > alertaTemperatura.temperatura_min) {
-          descPluvi = `A temperatura ficou abaixo do limite mínimo de ${cultura.temperatura_min}°C.`;
-        }
-      }
-    }
-    if (descPluvi == '' && descTemp == '') {
-      continue;
-    } else {
-      notificacoes.push({
-        nome_cultivo: cultura.nome_cultivo,
-        descPluviometria: descPluvi,
-        descTemperatura: descTemp,
-      });
-    }
-  }
+//         if (cultura.temperatura_min > alertaTemperatura.temperatura_min) {
+//           descPluvi = `A temperatura ficou abaixo do limite mínimo de ${cultura.temperatura_min}°C.`;
+//         }
+//       }
+//     }
+//     if (descPluvi == '' && descTemp == '') {
+//       continue;
+//     } else {
+//       notificacoes.push({
+//         nome_cultivo: cultura.nome_cultivo,
+//         descPluviometria: descPluvi,
+//         descTemperatura: descTemp,
+//       });
+//     }
+//   }
 
-  return notificacoes;
-}
+//   return notificacoes;
+// }
 
-export async function mySync(userId: string) {
-  await synchronize({
-    database,
-    pullChanges: async ({lastPulledAt}) => {
-      console.log(`${BASE_URL}/cultura/sync${await getTimeStamp(userId)}`);
+// export async function mySync(userId: string) {
+//   await synchronize({
+//     database,
+//     pullChanges: async ({lastPulledAt}) => {
+//       console.log(`${BASE_URL}/cultura/sync${await getTimeStamp(userId)}`);
 
-      const response = await fetch(
-        `${BASE_URL}/cultura/sync/${userId}/${await getTimeStamp(userId)}`,
-      );
-      console.log(response);
+//       const response = await fetch(
+//         `${BASE_URL}/cultura/sync/${userId}/${await getTimeStamp(userId)}`,
+//       );
+//       console.log(response);
 
-      if (!response.ok) {
-        throw new Error(await response.text());
-      }
+//       if (!response.ok) {
+//         throw new Error(await response.text());
+//       }
 
-      const {changes, timestamp} = await response.json();
+//       const {changes, timestamp} = await response.json();
 
-      return {changes, timestamp};
-    },
+//       return {changes, timestamp};
+//     },
 
-    pushChanges: async ({changes, lastPulledAt}) => {
-      const response = await axios.post(
-        `${BASE_URL}/cultura/sync?${lastPulledAt}`,
-        changes,
-      );
+//     pushChanges: async ({changes, lastPulledAt}) => {
+//       const response = await axios.post(
+//         `${BASE_URL}/cultura/sync?${lastPulledAt}`,
+//         changes,
+//       );
 
-      console.log(`resposta: ${response}`);
+//       console.log(`resposta: ${response}`);
 
-      if (!(response.status == 200)) {
-        throw new Error(await response.data);
-      }
-    },
-    migrationsEnabledAtVersion: 1,
-  });
-}
+//       if (!(response.status == 200)) {
+//         throw new Error(await response.data);
+//       }
+//     },
+//     migrationsEnabledAtVersion: 1,
+//   });
+// }

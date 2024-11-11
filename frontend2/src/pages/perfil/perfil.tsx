@@ -25,7 +25,9 @@ type PerfilScreenNavigationProp = StackNavigationProp<
 const UserProfile = () => {
   const navigation = useNavigation<PerfilScreenNavigationProp>();
 
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(true);
@@ -40,8 +42,12 @@ const UserProfile = () => {
           const response = await fetch(`${BASE_URL}/users/${userId}`);
           const data = await response.json();
 
-          if (data.username) {
-            setUsername(data.username);
+          console.log(data);
+
+          if (data.email) {
+            setEmail(data.email);
+            setName(data.name);
+            setLastName(data.lastName);
           } else {
             Alert.alert(
               'Erro',
@@ -75,7 +81,9 @@ const UserProfile = () => {
     }
 
     const payload = {
-      username: username,
+      email,
+      name,
+      lastName,
       password: password ? password : undefined,
     };
 
@@ -113,12 +121,30 @@ const UserProfile = () => {
       <ScrollView contentContainerStyle={styles.scrollViewContainer}>
         <Text style={styles.subtitle}>Perfil</Text>
 
+        <Text style={styles.label}>Nome</Text>
+        <TextInput
+          style={styles.input}
+          value={name}
+          onChangeText={setName}
+          placeholder="Digite seu nome"
+          placeholderTextColor="#888"
+        />
+
+        <Text style={styles.label}>Sobrenome</Text>
+        <TextInput
+          style={styles.input}
+          value={lastName}
+          onChangeText={setLastName}
+          placeholder="Digite seu sobrenome"
+          placeholderTextColor="#888"
+        />
+
         <Text style={styles.label}>E-mail</Text>
         <TextInput
           style={styles.input}
-          value={username}
-          onChangeText={setUsername}
-          placeholder="Digite o nome de usuário"
+          value={email}
+          onChangeText={setEmail}
+          placeholder="Digite seu email de usuário"
           placeholderTextColor="#888"
         />
 
