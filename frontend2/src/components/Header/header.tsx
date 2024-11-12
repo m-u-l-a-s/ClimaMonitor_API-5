@@ -1,35 +1,51 @@
-import React, {useState} from 'react';
-import {
-  TouchableHighlightProps,
-  TouchableOpacity,
-  Text,
-  View,
-  Modal,
-} from 'react-native';
+/* eslint-disable react-native/no-inline-styles */
+import React, {useEffect, useState} from 'react';
+import {TouchableOpacity, Text, View, Modal, Alert} from 'react-native';
 import {style} from './styles';
 import {NavigationProp} from '@react-navigation/native';
 import {useNavigation} from '@react-navigation/native';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
-import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackParamList} from '../../navigation/types';
-
-type Props = TouchableHighlightProps & {
-  text: string;
-  // navigation: NavigationProp<any>;
-};
+import {useAuth} from '../../context/AuthContext';
+import {BASE_URL} from '../../variables';
 
 export function Header() {
   const [modalVisible, setModalVisible] = useState(false);
+  const [name, setName] = useState('');
+  const {userId} = useAuth();
 
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (userId) {
+        try {
+          const response = await fetch(`${BASE_URL}/users/${userId}`);
+          const data = await response.json();
+
+          console.log(data);
+
+          if (data) {
+            setName(data.name);
+          } else {
+            Alert.alert(
+              'Erro',
+              'Não foi possível carregar os dados do usuário',
+            );
+          }
+        } catch (error) {
+          console.error(error);
+          Alert.alert('Erro', 'Erro ao carregar os dados do usuário');
+        }
+      }
+    };
+
+    fetchUserProfile();
+  }, [userId]);
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   return (
     <View style={style.container}>
       <View style={style.usuario}>
-        <TouchableOpacity onPress={() => setModalVisible(true)}>
-          <SimpleLineIcons name="user" style={{fontSize: 30}} />
-        </TouchableOpacity>
-        <Text style={style.texto}>Bem-vindo</Text>
+        <Text style={style.texto}>Bem-vindo {name}</Text>
       </View>
 
       <Modal

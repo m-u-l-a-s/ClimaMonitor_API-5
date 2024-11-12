@@ -3,8 +3,8 @@ import {themas} from '../../global/themes';
 
 export const style = StyleSheet.create({
   container: {
-    width: '90%',
-    height: 60,
+    width: '100%',
+    height: 100,
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'center',
@@ -24,11 +24,11 @@ export const style = StyleSheet.create({
   },
 
   containerTexto: {
-    width: '80%',
-    height: '90%',
-    alignItems: 'flex-start',
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
     justifyContent: 'center',
-    //backgroundColor:"red"
+    paddingHorizontal: 10,
   },
 
   text: {

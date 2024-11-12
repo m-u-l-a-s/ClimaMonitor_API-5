@@ -1,49 +1,45 @@
 import {Dimensions, StyleSheet} from 'react-native';
 import {themas} from '../../global/themes';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 export const style = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     backgroundColor: themas.colors.branco,
+    paddingVertical: 20,
   },
   boxTop: {
-    height: Dimensions.get('window').height / 3,
+    height: Dimensions.get('window').height / 4,
     width: '100%',
-    //backgroundColor:'red',
     alignItems: 'center',
     justifyContent: 'center',
   },
   boxMid: {
-    height: Dimensions.get('window').height / 2,
     width: '100%',
-    //backgroundColor:'green',
     paddingHorizontal: 37,
+    alignItems: 'flex-start',
+    marginBottom: 20, // Add spacing to avoid overlapping with footer
   },
-
   img: {
     height: 100,
     width: 180,
     borderRadius: 5,
-    marginTop: 40,
+    marginTop: 20,
   },
-
   text: {
     fontWeight: 'condensed',
     fontSize: 35,
     color: 'black',
   },
-
   textBottom: {
     fontSize: 18,
+    color: 'black',
   },
-
   textoRodape: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 20,
+    paddingVertical: 20,
   },
 });

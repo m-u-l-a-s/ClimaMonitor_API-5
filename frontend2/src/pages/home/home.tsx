@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 // src/pages/home/home.tsx
 import React, {useEffect} from 'react';
 import {FlatList, Text, View} from 'react-native';
@@ -33,30 +34,40 @@ export default function Home() {
       </View>
       <View style={style.boxMid}>
         <View style={style.containerCard}>
-          <FlatList
-            data={cultivos}
-            renderItem={({item, index}) => (
-              <CardHome
-                Icon={MaterialIcons}
-                IconName={'more-horiz'}
-                createdAt={item.createdAt}
-                deletedAt={item.deletedAt}
-                _id={item._id}
-                key={index}
-                nome_cultivo={item.nome_cultivo}
-                lastUpdate=""
-                ponto_cultivo={item.ponto_cultivo}
-                temperatura_max={item.temperatura_max}
-                pluviometria_max={item.pluviometria_max}
-                temperatura_min={item.temperatura_min}
-                pluviometria_min={item.pluviometria_min}
-                temperaturas={item.temperaturas}
-                pluviometrias={item.pluviometrias}
-                alertasTemp={item.alertasTemp} // Colocar os dados reais se disponíveis
-                alertasPluvi={item.alertasPluvi} // Colocar os dados reais se disponíveis
-              />
-            )}
-          />
+          {cultivos.length ? (
+            <FlatList
+              data={cultivos}
+              renderItem={({item, index}) => (
+                <CardHome
+                  Icon={MaterialIcons}
+                  IconName={'more-horiz'}
+                  createdAt={item.createdAt}
+                  deletedAt={item.deletedAt}
+                  _id={item._id}
+                  key={index}
+                  nome_cultivo={item.nome_cultivo}
+                  lastUpdate=""
+                  ponto_cultivo={item.ponto_cultivo}
+                  temperatura_max={item.temperatura_max}
+                  pluviometria_max={item.pluviometria_max}
+                  temperatura_min={item.temperatura_min}
+                  pluviometria_min={item.pluviometria_min}
+                  temperaturas={item.temperaturas}
+                  pluviometrias={item.pluviometrias}
+                  alertasTemp={item.alertasTemp}
+                  alertasPluvi={item.alertasPluvi}
+                />
+              )}
+            />
+          ) : (
+            <View
+              style={{
+                justifyContent: 'center',
+                marginTop: 20,
+              }}>
+              <Text>Nenhum cultivo disponível no momento.</Text>
+            </View>
+          )}
         </View>
       </View>
       <View style={style.boxBottom}>

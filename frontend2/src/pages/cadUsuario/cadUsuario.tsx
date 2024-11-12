@@ -1,5 +1,6 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {useState} from 'react';
-import {View, Text, Image, Alert} from 'react-native';
+import {View, Text, Image, Alert, TouchableOpacity} from 'react-native';
 import {style} from './styles';
 import Logo from '../../assets/logo.png';
 import {InputLogin} from '../../components/InputLogin/inputLogin';
@@ -64,7 +65,9 @@ export default function CadastroUsuario() {
   }
 
   return (
-    <ScrollView>
+    <ScrollView
+      contentContainerStyle={{flexGrow: 1}}
+      keyboardShouldPersistTaps="handled">
       <View style={style.container}>
         <View style={style.boxTop}>
           <Text style={style.text}>Cadastre-se</Text>
@@ -77,31 +80,34 @@ export default function CadastroUsuario() {
             placeholder="Nome"
             value={name}
             onChangeText={setName}
-            title="name"
+            title="Nome"
           />
-
           <InputLogin
             placeholder="Sobrenome"
             value={lastName}
             onChangeText={setlastName}
-            title="lastName"
+            title="Sobrenome"
           />
-
           <InputLogin
-            placeholder="Usuário"
+            placeholder="E-mail"
             value={email}
             onChangeText={setEmail}
-            title="e-mail"
+            title="E-mail"
           />
-
           <InputLogin
             placeholder="Senha"
             value={password}
             onChangeText={setPassword}
-            title="password"
+            title="Senha"
           />
-
           <Button text="Cadastrar" onPress={getCadastrar} />
+        </View>
+
+        <View style={style.textoRodape}>
+          <Text style={style.textBottom}>Já tem um cadastro?</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+            <Text style={{color: '#007BFF', fontSize: 18}}> Clique aqui!</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </ScrollView>
