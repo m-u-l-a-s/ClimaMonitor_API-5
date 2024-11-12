@@ -6,6 +6,7 @@ import {BASE_URL} from '../../variables';
 import {useCultivoContext} from '../../context/CulturaContext';
 import styles from './styles';
 import {useAuth} from '../../context/AuthContext';
+import {useNavigation} from '@react-navigation/native';
 
 const Cadastro = () => {
   const {userId} = useAuth();
@@ -17,6 +18,8 @@ const Cadastro = () => {
   const [minTemp, setMinTemp] = useState('');
   const [maxPluvi, setMaxPluvi] = useState('');
   const [minPluvi, setMinPluvi] = useState('');
+
+  const navigation = useNavigation();
 
   const handleSubmit = async () => {
     if (
@@ -71,7 +74,7 @@ const Cadastro = () => {
       if (response.ok) {
         await response.json();
         Alert.alert('Success', 'Cadastro realizado com sucesso!');
-        await fetchCultivos();
+        await fetchCultivos(userId as string);
 
         setLatitude('');
         setLongitude('');
@@ -80,6 +83,8 @@ const Cadastro = () => {
         setMinTemp('');
         setMaxPluvi('');
         setMinPluvi('');
+
+        navigation.navigate('Home');
       } else {
         const error = await response.json();
         console.error('Error response:', error);

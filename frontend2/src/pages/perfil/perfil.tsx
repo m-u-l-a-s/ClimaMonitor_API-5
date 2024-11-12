@@ -96,6 +96,7 @@ const UserProfile = () => {
       .then(data => {
         if (data.message && data.user) {
           Alert.alert('Sucesso', 'Perfil atualizado com sucesso');
+          navigation.navigate('Home');
         } else if (data.error) {
           Alert.alert('Erro', data.error);
         } else {
