@@ -6,14 +6,15 @@ import { style } from './styles';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../navigation/types';
-import { deleteCultura } from '../../services/watermelon';
+import { BASE_URL } from '../../variables';
+//import { deleteCultura } from '../../services/watermelon';
 
 type IconComponent = React.ComponentType<React.ComponentProps<typeof MaterialIcons>>;
 
 type Props = {
     Icon: IconComponent,
     IconName: string,
-    id: string, // MongoDB ID for the cultivo
+    _id: string, // MongoDB ID for the cultivo
     nome_cultivo: string,
     // other props you need here
 };
@@ -21,18 +22,48 @@ type Props = {
 type DashboardScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Dashboard'>;
 
 export const CardHome = (props: Props) => {
-    const { Icon, IconName, nome_cultivo, id } = props;
+    const { Icon, IconName, nome_cultivo, _id } = props;
     const navigation = useNavigation<DashboardScreenNavigationProp>();
     const [modalVisible, setModalVisible] = useState(false);
 
     const handleDelete = async () => {
-        setModalVisible(false);
+        setModalVisible(false); // Fecha o modal
+        if (_id) {
+            try {
+            //     //vai deletar a cultura no backend
+            //     await deleteCulturaBackend(id); 
+            // console.log("Cultura excluída do MongoDB");
+
+            // Vai  Deletar no WatermelonDB
+            await deleteCulturaBackend(_id); 
+            Alert.alert("Cultura excluída com sucesso!");
+            } catch (error) {
+                console.log("erro pego", error);
+                if (error instanceof Error) {
+                    Alert.alert("Erro ao excluir cultura:", error.message);
+                } else {
+                    Alert.alert("Erro desconhecido ao excluir cultura.");
+                }
+            }
+        } else {
+            Alert.alert("Erro: ID da cultura não encontrado.");
+        }
+    };
+
+    const deleteCulturaBackend = async (id: string) => {
         try {
-            await deleteCultura(id);
-            Alert.alert("Cultura excluída com sucesso!", id);
+            const response = await fetch(`${BASE_URL}/cultura/${id}`, {
+                method: 'DELETE',
+            });
+    
+            if (!response.ok) {
+                throw new Error(`Erro ${response.status}: Cultura não encontrada ou erro no servidor.`);
+            }
+            
+            console.log("Cultura removida no backend com sucesso.", id);
         } catch (error) {
-            console.error("Erro ao excluir cultura:", error);
-            Alert.alert("Erro ao excluir cultura.");
+            console.error("Erro ao remover cultura no backend:", error);
+            throw error; 
         }
     };
 
@@ -54,7 +85,7 @@ export const CardHome = (props: Props) => {
             >
                 <View style={style.modalOverlay}>
                     <View style={style.modalContent}>
-                        <TouchableOpacity onPress={() => { setModalVisible(false); navigation.navigate('Rota1'); }}>
+                        <TouchableOpacity onPress={() => { setModalVisible(false); navigation.navigate('Relatorio', { cultura: props}); }}>
                             <Text style={style.modalText}>Relatório</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => { 
