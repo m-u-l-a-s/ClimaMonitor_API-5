@@ -1,4 +1,5 @@
 import {Cultivo} from '../@types/culturaDto';
+import CulturasModel from '../models/Cultura';
 
 export type RootStackParamList = {
   Login: undefined;
@@ -6,7 +7,7 @@ export type RootStackParamList = {
   BottomRoutes: undefined;
   Home: undefined;
   Dashboard: {
-    cultura: Cultivo;
+    cultura: CulturasModel;
   };
   Cadastro: undefined;
   Profile: undefined;

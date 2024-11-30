@@ -7,29 +7,28 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../navigation/types';
 import { deleteCultura } from '../../services/watermelon';
+import CulturasModel from '../../models/Cultura';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 type IconComponent = React.ComponentType<React.ComponentProps<typeof MaterialIcons>>;
 
-type Props = {
-    Icon: IconComponent,
-    IconName: string,
-    id: string, // MongoDB ID for the cultivo
-    nome_cultivo: string,
-    // other props you need here
-};
+
 
 type DashboardScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Dashboard'>;
+interface Props {
+    cultura: CulturasModel
+}
 
-export const CardHome = (props: Props) => {
-    const { Icon, IconName, nome_cultivo, id } = props;
+
+export const CardHome = ({ cultura }: Props) => {
     const navigation = useNavigation<DashboardScreenNavigationProp>();
     const [modalVisible, setModalVisible] = useState(false);
 
     const handleDelete = async () => {
         setModalVisible(false);
         try {
-            await deleteCultura(id);
-            Alert.alert("Cultura excluída com sucesso!", id);
+            await deleteCultura(cultura.id_cultura);
+            Alert.alert("Cultura excluída com sucesso!", cultura.id_cultura);
         } catch (error) {
             console.error("Erro ao excluir cultura:", error);
             Alert.alert("Erro ao excluir cultura.");
@@ -38,12 +37,12 @@ export const CardHome = (props: Props) => {
 
     return (
         <View style={style.container}>
-            <TouchableOpacity style={style.containerTexto} onPress={() => navigation.navigate("Dashboard", { cultura: props })}>
-                <Text style={style.text}>{nome_cultivo}</Text>
+            <TouchableOpacity style={style.containerTexto} onPress={() => navigation.navigate("Dashboard", { cultura: cultura })}>
+                <Text style={style.text}>{cultura.nome_cultivo}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={style.icon} onPress={() => setModalVisible(true)}>
-                <Icon name={IconName as any} size={35} />
+                <MaterialIcons name={"more-horiz" as any} size={35} />
             </TouchableOpacity>
 
             <Modal
@@ -54,15 +53,15 @@ export const CardHome = (props: Props) => {
             >
                 <View style={style.modalOverlay}>
                     <View style={style.modalContent}>
-                        <TouchableOpacity onPress={() => { setModalVisible(false); navigation.navigate('Rota1'); }}>
+                        {/* <TouchableOpacity onPress={() => { setModalVisible(false); navigation.navigate('Rota1'); }}>
                             <Text style={style.modalText}>Relatório</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => { 
+                        </TouchableOpacity> */}
+                        {/* <TouchableOpacity onPress={() => { 
                             setModalVisible(false); 
-                            navigation.navigate('EditarCultivo', { cultivoId: props });
+                            navigation.navigate('EditarCultivo', { cultivoId: cultura.id });
                         }}>
                             <Text style={style.modalText}>Editar</Text>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                         <TouchableOpacity onPress={handleDelete}>
                             <Text style={style.modalText}>Excluir</Text>
                         </TouchableOpacity>

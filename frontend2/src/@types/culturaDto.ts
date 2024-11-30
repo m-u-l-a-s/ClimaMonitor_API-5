@@ -16,7 +16,8 @@ export interface Pluviometria {
 }
 
 export interface Cultivo {
-  _id?: string;
+  id_watermelon: string;
+  id_mongo: string
   ponto_cultivo: PontoCultivo;
   nome_cultivo: string;
   temperatura_max: number;

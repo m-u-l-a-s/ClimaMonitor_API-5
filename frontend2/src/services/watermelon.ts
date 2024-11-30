@@ -10,7 +10,7 @@ import axios from 'axios';
 import { NotificacaoType } from '../@types/notificacaoDto';
 
 export const getCulturas = async (): Promise<Collection<Cultura>> => {
-  return database.get('Cultura');
+  return database.get('cultura');
 };
 
 export const findOneCultura = async (id: string): Promise<Cultura> => {
@@ -19,7 +19,7 @@ export const findOneCultura = async (id: string): Promise<Cultura> => {
 
 export const findAllCulturaById = async (userId: string): Promise<Cultura[]> => {
   const cultura = await getCulturas();
-  const allCulturas = await cultura.query(Q.where("userId", userId))
+  const allCulturas = await cultura.query(Q.where("user_id", userId))
   return allCulturas;
 };
 
@@ -177,7 +177,6 @@ export async function mySync(userId: string) {
       }
 
       const { changes, timestamp } = await response.json();
-      console.log(changes)
 
       if (!changes || !timestamp) {
         throw new Error('Invalid data returned from server');

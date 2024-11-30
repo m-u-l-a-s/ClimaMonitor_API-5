@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-shadow */
-import React, {createContext, useContext, useState, ReactNode} from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { mySync } from '../services/watermelon';
 
 interface AuthContextProps {
   userId: string | null;
@@ -15,9 +16,21 @@ interface AuthProviderProps {
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
-export const AuthProvider: React.FC<AuthProviderProps> = ({children}) => {
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [userId, setUserId] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
+
+  async function sincronizarDados() {
+    if (userId) {
+      await mySync(userId)
+    }
+  }
+
+  useEffect(() => {
+    if (userId) {
+      sincronizarDados()
+    }
+  }, [userId])
 
   const setUser = (id: string, token: string) => {
     setUserId(id);
@@ -32,7 +45,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({children}) => {
   };
 
   return (
-    <AuthContext.Provider value={{userId, token, setUser, logout}}>
+    <AuthContext.Provider value={{ userId, token, setUser, logout }}>
       {children}
     </AuthContext.Provider>
   );
