@@ -1,8 +1,7 @@
-// import { addColumns, schemaMigrations } from '@nozbe/watermelondb/Schema/migrations'
-// import { updateCultura } from '../services/watermelon'
+import { schemaMigrations } from '@nozbe/watermelondb/Schema/migrations'
 
-// export default schemaMigrations({
-//   migrations: [
+export default schemaMigrations({
+  migrations: [
 //     // {
 //     //   toVersion: 2,
 //     //   steps: [
@@ -15,6 +14,6 @@
 //     //     })
 //     //   ]
 //     // }
-//   ],
-// })
+  ],
+ })
 

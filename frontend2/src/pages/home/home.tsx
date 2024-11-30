@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 // src/pages/home/home.tsx
-import React, {useEffect} from 'react';
-import {FlatList, Text, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {Button, FlatList, Text, View} from 'react-native';
 import {style} from './styles';
 import {CardHome} from '../../components/CardHome/cardHome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -9,6 +9,8 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useCultivoContext} from '../../context/CulturaContext';
 import SyncComponent from '../../components/syncComponent/syncComponent';
 import {useAuth} from '../../context/AuthContext';
+import  CulturasModel  from '../../models/Cultura';
+import { findAllCulturaById, mySync } from '../../services/watermelon';
 
 // const enhance = withObservables(['Cultura'], ({Cultura}) => ({
 //   Cultura,
@@ -18,13 +20,18 @@ import {useAuth} from '../../context/AuthContext';
 
 export default function Home() {
   const {userId} = useAuth();
-  const {cultivos, fetchCultivos} = useCultivoContext();
+  const [culturas, setCulturas] = useState<CulturasModel[]>([]) 
+  // const {cultivos, fetchCultivos} = useCultivoContext();
 
   useEffect(() => {
     if (userId) {
-      fetchCultivos(userId);
+      console.log("Chegou aqui")
+      findAllCulturaById(userId).then(resp => {
+        console.log("Chegou aqui 2")
+      })
+      // fetchCultivos(userId);
     }
-  }, [userId, fetchCultivos]);
+  }, [culturas]);
 
   return (
     <View style={style.container}>
@@ -34,28 +41,30 @@ export default function Home() {
       </View>
       <View style={style.boxMid}>
         <View style={style.containerCard}>
-          {cultivos.length ? (
+          {culturas.length ? (
             <FlatList
-              data={cultivos}
+              data={culturas}
               renderItem={({item, index}) => (
                 <CardHome
                   Icon={MaterialIcons}
                   IconName={'more-horiz'}
-                  createdAt={item.createdAt}
-                  deletedAt={item.deletedAt}
-                  _id={item._id}
-                  key={index}
                   nome_cultivo={item.nome_cultivo}
-                  lastUpdate=""
-                  ponto_cultivo={item.ponto_cultivo}
-                  temperatura_max={item.temperatura_max}
-                  pluviometria_max={item.pluviometria_max}
-                  temperatura_min={item.temperatura_min}
-                  pluviometria_min={item.pluviometria_min}
-                  temperaturas={item.temperaturas}
-                  pluviometrias={item.pluviometrias}
-                  alertasTemp={item.alertasTemp}
-                  alertasPluvi={item.alertasPluvi}
+                  id={item.id}
+                  key={index}
+                  // deletedAt={item.deletedAt}
+                  // _id={item._id}
+                  // key={index}
+                  // nome_cultivo={item.nome_cultivo}
+                  // lastUpdate=""
+                  // ponto_cultivo={{latitude: item.latitude, longitude: item.longitude}}
+                  // temperatura_max={item.temperatura_max}
+                  // pluviometria_max={item.pluviometria_max}
+                  // temperatura_min={item.temperatura_min}
+                  // pluviometria_min={item.pluviometria_min}
+                  // temperaturas={[]}
+                  // pluviometrias={[]}
+                  // alertasTemp={[]}
+                  // alertasPluvi={[]}
                 />
               )}
             />
