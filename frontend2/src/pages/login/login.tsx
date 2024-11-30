@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable curly */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState} from 'react';
 import {View, Text, Image, TouchableOpacity, Alert} from 'react-native';
@@ -11,6 +13,8 @@ import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {BASE_URL} from '../../variables';
 import {useAuth} from '../../context/AuthContext';
 import {RootStackParamList} from '../../navigation/types';
+import RNBiometrics from 'react-native-simple-biometrics';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Login() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
@@ -19,6 +23,49 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(true);
+  const [isCheckingBiometrics, setIsCheckingBiometrics] = useState(false);
+
+  const checkBiometricLogin = async () => {
+    setIsCheckingBiometrics(true);
+    try {
+      const canAuthenticate = await RNBiometrics.canAuthenticate();
+
+      if (!canAuthenticate) return;
+      const response = await fetch(`${BASE_URL}/users/check-email`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({email}),
+      });
+
+      const data = await response.json();
+
+      if (data.userId) {
+        const savedPreference = await AsyncStorage.getItem(
+          'biometricPreference',
+        );
+
+        if (savedPreference === 'true') {
+          const result = await RNBiometrics.requestBioAuth(
+            'Login Biométrico',
+            'Toque no sensor para autenticar.',
+          );
+
+          if (result) {
+            setUser(data.userId, data.token);
+            navigation.reset({routes: [{name: 'BottomRoutes'}]});
+          } else {
+            Alert.alert('Erro', 'Autenticação biométrica falhou.');
+          }
+        }
+      }
+    } catch (error) {
+      console.error(error);
+
+      Alert.alert('Erro', 'Houve um problema ao verificar biometria.');
+    } finally {
+      setIsCheckingBiometrics(false);
+    }
+  };
 
   async function getLogin() {
     try {
@@ -44,7 +91,45 @@ export default function Login() {
       if (response.status === 200) {
         setUser(responseData.userId, responseData.token);
 
-        Alert.alert('Sucesso', 'Login realizado com sucesso!');
+        const canBiometric = await RNBiometrics.canAuthenticate();
+
+        if (canBiometric) {
+          const savedPreference = await AsyncStorage.getItem(
+            'biometricPreference',
+          );
+
+          if (savedPreference === null) {
+            Alert.alert(
+              'Ativar biometria?',
+              'Deseja ativar a autenticação por biometria para facilitar futuros logins?',
+              [
+                {
+                  text: 'Não',
+                  onPress: async () => {
+                    await AsyncStorage.setItem('biometricPreference', 'false');
+                  },
+                  style: 'cancel',
+                },
+                {
+                  text: 'Sim',
+                  onPress: async () => {
+                    try {
+                      await RNBiometrics.requestBioAuth(
+                        'Ativar Biometria',
+                        'Confirme sua identidade',
+                      );
+                      await AsyncStorage.setItem('biometricPreference', 'true');
+                      Alert.alert('Sucesso', 'Biometria ativada com sucesso!');
+                    } catch (error) {
+                      Alert.alert('Erro', 'Falha ao ativar a biometria');
+                    }
+                  },
+                },
+              ],
+            );
+          }
+        }
+
         navigation.reset({routes: [{name: 'BottomRoutes'}]});
       } else {
         Alert.alert(
@@ -87,6 +172,7 @@ export default function Login() {
           IconRigth={Octicons}
           secureTextEntry={showPassword}
           onIconRigthPress={() => setShowPassword(!showPassword)}
+          onFocus={checkBiometricLogin}
         />
 
         <Button text="Entrar" onPress={getLogin} />
