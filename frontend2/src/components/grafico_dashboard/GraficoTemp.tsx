@@ -7,9 +7,8 @@ import { Alert } from 'react-native';
 const { width } = Dimensions.get('window');
 
 const GraficoTemperaturas: React.FC<{ temperaturas: Temperatura[], temperatura_min: number, temperatura_max: number }> = ({ temperaturas, temperatura_min, temperatura_max }) => {
-    const [offset, setOffset] = useState(0); // Controle de deslocamento
+    const [offset, setOffset] = useState(0); // Paginação
 
-    // Determina os dados baseados no deslocamento
     const start = Math.max(0, temperaturas.length - 7 - offset);
     const end = Math.max(0, temperaturas.length - offset);
 
@@ -70,7 +69,6 @@ const GraficoTemperaturas: React.FC<{ temperaturas: Temperatura[], temperatura_m
                 verticalLabelRotation={90}
                 onDataPointClick={handleDataPointClick}
                 style={styles.chart}
-                fromZero={true}
             />
             <View style={styles.buttons}>
                 <Button
@@ -95,7 +93,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     chart: {
-        marginVertical: 10,
+        marginVertical: 0,
         borderRadius: 16,
     },
     buttons: {

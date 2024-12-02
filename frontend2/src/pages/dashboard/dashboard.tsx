@@ -31,136 +31,103 @@ type DashboardRouteProp = RouteProp<RootStackParamList, 'Dashboard'>;
 export default function Dashboard() {
   const route = useRoute<DashboardRouteProp>();
   const { cultura } = route.params;
-  const [dataInicial, setDataInicial] = useState<Date>(new Date())
+  const [dataInicial, setDataInicial] = useState<Date>(new Date());
   const [dataEscolhida, setDataEscolhida] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [chartData, setChartData] = useState<chartPluvi>({
     labels: [],
     values: [],
   });
-  const [temperaturasW, setTemperaturasW] = useState<Temperatura[]>([])
-  const [PluviometriaW, setPluviometriaW] = useState<Pluviometria[]>([])
-
+  const [temperaturasW, setTemperaturasW] = useState<Temperatura[]>([]);
+  const [PluviometriaW, setPluviometriaW] = useState<Pluviometria[]>([]);
 
   const getData = async () => {
-    const temp = await findAllTemperaturasById(cultura.id_cultura)
-    const pluvi = await findAllPluviometriasById(cultura.id_cultura)
-    setDataInicial(pluvi[0].data)
-    setTemperaturasW(temp)
-    setPluviometriaW(pluvi)
-  }
-
-
-  const onShowDatePicker = () => {
-    setShowDatePicker(true);
+    const temp = await findAllTemperaturasById(cultura.id_cultura);
+    const pluvi = await findAllPluviometriasById(cultura.id_cultura);
+    setDataInicial(pluvi[0]?.data || new Date());
+    setTemperaturasW(temp);
+    setPluviometriaW(pluvi);
   };
 
+  const onShowDatePicker = () => {
+    setShowDatePicker(!showDatePicker);
+  };
 
-  const onDateChange = (
-    event: any,
-    dataEscolhida: React.SetStateAction<Date>,
-  ) => {
+  const onDateChange = (event: any, selectedDate: Date | undefined) => {
     setShowDatePicker(false);
-    if (dataEscolhida) {
-      setDataEscolhida(dataEscolhida);
+    if (selectedDate) {
+      setDataEscolhida(selectedDate);
     }
   };
 
+  const PluviometriaPorSemana = (pluviometrias : Pluviometria[]) => {
+    const semana1 : number[] = []
+    const semana2 : number[] = []
+    const semana3 : number[] = []
+    const semana4 : number[] = []
+    
+    if (pluviometrias.length > 0) {
+      pluviometrias.forEach(item => {
+        if (item.data.getDate() <= 7) {
+          semana1.push(item.pluviometria)
+        }
+        if (item.data.getDate() <= 14 && item.data.getDate() > 7 ) {
+          semana2.push(item.pluviometria)
+        }
+        if (item.data.getDate() <= 21 && item.data.getDate() > 14) {
+          semana3.push(item.pluviometria)
+        }
+        if (item.data.getDate() > 21) {
+          semana4.push(item.pluviometria)
+        }
+      })
+      const semanas = [semana1, semana2, semana3, semana4]
+
+      const medias = semanas.map(semana => {
+        const soma = semana.reduce((acc, value) => acc + value, 0);
+        return semana.length > 0 ? soma  : 0; // Média ou 0 se não houver dados
+      });
+
+      return medias;
+    }
+
+    return [0,0,0,0]
+  }
 
   useEffect(() => {
-    getData()
-  }, [cultura])
+    getData();
+  }, [cultura]);
 
-  // if (PluviometriaW.length != 0 && temperaturasW.length != 0) {
-  //   const filteredData = PluviometriaW.filter(item => {
-  //     return (
-  //       item.data.getMonth() === dataEscolhida.getMonth() &&
-  //       item.data.getFullYear() === dataEscolhida.getFullYear()
-  //     );
-  //   });
+  useEffect(() => {
+    if (PluviometriaW.length !== 0 && temperaturasW.length !== 0) {
+      const filteredData = PluviometriaW.filter(item => {
+        return (
+          item.data.getMonth() === dataEscolhida.getMonth() &&
+          item.data.getFullYear() === dataEscolhida.getFullYear()
+        );
+      });
 
-  //   const semana = [0, 0, 0, 0];
-  //   filteredData.forEach(item => {
-  //     const day = item.data.getDate();
-  //     if (day >= 1 && day <= 7) semana[0] += item.pluviometria;
-  //     else if (day >= 8 && day <= 14) semana[1] += item.pluviometria;
-  //     else if (day >= 15 && day <= 21) semana[2] += item.pluviometria;
-  //     else if (day >= 22 && day <= 31) semana[3] += item.pluviometria;
-  //     const semanaFormatada = semana.map(value => parseFloat(value.toFixed(1)));
-  //     setChartData({
-  //       labels: ['1-7', '8-14', '15-21', '22-31'],
-  //       values: semanaFormatada,
-  //     })
-  //   });
 
-  // }
+      const chartValues : number[] = PluviometriaPorSemana(filteredData);
 
-  // const validTemperaturas = temperaturasW
-  //   .filter(temp => temp.data)
-  //   .sort((a, b) => (a.data as any) - (b.data as any));
+      setChartData({
+        labels: ["semana 1","semana 2","semana 3", "semana 4"],
+        values: chartValues,
+      });
+    }
+  }, [PluviometriaW, temperaturasW, dataEscolhida]);
 
-  // const lineChartData = {
-  //   labels: validTemperaturas.map(temp =>
-  //     temp.data.toLocaleDateString('pt-BR'),
-  //   ),
-  //   datasets: [
-  //     {
-  //       data: validTemperaturas.map(temp => temp.temperatura_media),
-  //       color: (opacity = 1) => `rgba(0, 128, 255, ${opacity})`,  // Cor laranja
-  //       strokeWidth: 3,
-  //     },
-  //     {
-  //       data: validTemperaturas.map(() => cultura.temperatura_min),
-  //       color: (opacity = 0) => `rgba(0, 255, 0, ${opacity})`,
-  //       strokeWidth: 3,
-  //       withDots: false,
-  //     },
-  //     {
-  //       data: validTemperaturas.map(() => cultura.temperatura_max),
-  //       color: (opacity = 0) => `rgba(255, 0, 0, ${opacity})`,
-  //       strokeWidth: 3,
-  //       withDots: false,
-  //     },
-  //   ],
-  // };
+  let tempData = [
+    {
+      data: new Date(),
+      temperatura_media: 0,
+      temperatura_max: 0,
+      temperatura_min: 0,
+    },
+  ];
 
-  // const handleDataPointClick = (data: { index: number }) => {
-  //   const index = data.index;
-  //   const clickedTemperature = validTemperaturas[index]?.temperatura_media;
-  //   if (clickedTemperature !== undefined) {
-  //     Alert.alert(
-  //       'Temperatura Média',
-  //       `Temperatura: ${clickedTemperature} °C`,
-  //       [{ text: 'OK' }],
-  //     );
-  //   }
-  // };
-
-  let tempData = []
-
-  if (temperaturasW.length == 0) {
-    tempData = [
-      {
-        data: new Date(2024, 10, 25),
-        temperatura_media: 22,
-        temperatura_max: 30,
-        temperatura_min: 15,
-      },
-      {
-        data: new Date(2024, 10, 26),
-        temperatura_media: 24,
-        temperatura_max: 32,
-        temperatura_min: 18,
-      },
-      {
-        data: new Date(2024, 10, 27),
-        temperatura_media: 26,
-        temperatura_max: 33,
-        temperatura_min: 19,
-      },
-    ]
-  } else {
-    tempData = temperaturasW
+  if (temperaturasW.length !== 0) {
+    tempData = temperaturasW;
   }
 
   return (
@@ -173,7 +140,7 @@ export default function Dashboard() {
           <CardDashbord
             title1="Temperatura Máx"
             valor={
-              temperaturasW && temperaturasW.length != 0
+              temperaturasW && temperaturasW.length !== 0
                 ? temperaturasW.slice(-1)[0].temperatura_max.toString()
                 : '...'
             }
@@ -185,7 +152,7 @@ export default function Dashboard() {
           <CardDashbord
             title1="Temperatura Min"
             valor={
-              temperaturasW && temperaturasW.length != 0
+              temperaturasW && temperaturasW.length !== 0
                 ? temperaturasW.slice(-1)[0].temperatura_min.toString()
                 : '...'
             }
@@ -199,7 +166,7 @@ export default function Dashboard() {
           <CardDashbord
             title1="Temperatura Média"
             valor={
-              temperaturasW && temperaturasW.length != 0
+              temperaturasW && temperaturasW.length !== 0
                 ? temperaturasW.slice(-1)[0].temperatura_media.toString()
                 : '...'
             }
@@ -211,7 +178,7 @@ export default function Dashboard() {
           <CardDashbord
             title1="Chuva"
             valor={
-              PluviometriaW && PluviometriaW.length != 0
+              PluviometriaW && PluviometriaW.length !== 0
                 ? PluviometriaW.slice(-1)[0].pluviometria.toString()
                 : '...'
             }
@@ -226,43 +193,32 @@ export default function Dashboard() {
         </Text>
 
         <ScrollView horizontal={true}>
-          <GraficoTemperaturas temperaturas={tempData} temperatura_max={cultura.temperatura_max} temperatura_min={cultura.temperatura_min} />
+          <GraficoTemperaturas
+            temperaturas={tempData}
+            temperatura_max={cultura.temperatura_max}
+            temperatura_min={cultura.temperatura_min}
+          />
         </ScrollView>
 
-        {/* <View style={style.pluvi}>
+        <ScrollView style={style.pluvi}>
           <View style={style.tituloPluvi}>
-            <Text style={style.tituloTexto}>Pluviometria (mm)</Text>
-
-            <TouchableOpacity style={style.btn} onPress={onShowDatePicker}>
-              <Text style={style.buttonText}>Selecionar Mês</Text>
-            </TouchableOpacity>
+            <Text style={style.tituloTexto}>Pluviometria Por Semana (mm)</Text>
 
             <Button title="Selecionar Mês" onPress={onShowDatePicker} />
 
             {showDatePicker && (
               <DateTimePicker
                 value={dataEscolhida}
+                onChange={onDateChange}
                 mode="date"
                 display="default"
-                // onChange={(e) => onDateChange(e)}
                 minimumDate={dataInicial}
                 maximumDate={new Date()} // Para impedir a seleção de datas futuras
               />
             )}
           </View>
           <BarChartPluviometria data={chartData} />
-        </View> */}
-
-
-        {/* <View style={{ alignItems: 'center', marginTop: 20 }}>
-          <Text style={{ fontSize: 20, marginBottom: 10, color: 'black' }}>
-            Timeline - Dias Anteriores
-          </Text>
-          <Timeline
-            temperatures={ }
-            pluviometries={ }
-          />
-        </View> */}
+        </ScrollView>
       </View>
     </ScrollView>
   );

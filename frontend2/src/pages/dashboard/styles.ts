@@ -39,10 +39,10 @@ export const style = StyleSheet.create({
   },
 
   tituloPluvi: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 15,
+    marginBottom: 10,
     color: 'black',
   },
 
