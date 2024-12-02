@@ -12,4 +12,7 @@ export type RootStackParamList = {
   Cadastro: undefined;
   Profile: undefined;
   Notificacao: undefined;
+  Relatorio:{
+    cultura: Cultivo;
+  };
 };

@@ -7,6 +7,7 @@ import CustomTabBar from '../components/CustomTabBar';
 import Cadastro from '../pages/cadastro/cadastro';
 import Dashboard from '../pages/dashboard/dashboard';
 import Notificacao from '../pages/notificacao/notificacao';
+import Relatorio from '../pages/relatorio/relatorio';
 import UserProfile from '../pages/perfil/perfil';
 import {View} from 'react-native';
 import {style} from './styles';
@@ -27,6 +28,7 @@ export default function BottomRoutes() {
           <Tab.Screen name="Cadastro" component={Cadastro} />
           <Tab.Screen name="Profile" component={UserProfile} />
           <Tab.Screen name="Notificacao" component={Notificacao} />
+          <Tab.Screen name="Relatorio" component={Relatorio} />
         </Tab.Navigator>
       </View>
     </View>
