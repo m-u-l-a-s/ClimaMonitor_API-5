@@ -29,12 +29,7 @@ const CardHome = ({ cultura }: Props) => {
         setModalVisible(false); // Fecha o modal
         if (cultura.id_cultura) {
             try {
-                //     //vai deletar a cultura no backend
-                //     await deleteCulturaBackend(id); 
-                // console.log("Cultura excluída do MongoDB");
-
-                // Vai  Deletar no WatermelonDB
-                await deleteCulturaBackend(cultura.id_cultura);
+                await deleteCultura(cultura.id_cultura);
                 Alert.alert("Cultura excluída com sucesso!");
             } catch (error) {
                 console.log("erro pego", error);
@@ -46,16 +41,6 @@ const CardHome = ({ cultura }: Props) => {
             }
         } else {
             Alert.alert("Erro: ID da cultura não encontrado.");
-        }
-    };
-
-    const deleteCulturaBackend = async (id: string) => {
-        try {
-            await deleteCultura(cultura.id_cultura);
-            Alert.alert("Cultura excluída com sucesso!", cultura.id_cultura);
-        } catch (error) {
-            console.error("Erro ao remover cultura no backend:", error);
-            throw error;
         }
     };
 

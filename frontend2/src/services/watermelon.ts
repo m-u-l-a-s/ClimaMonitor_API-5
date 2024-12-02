@@ -19,7 +19,7 @@ export const getCulturas = async (): Promise<Collection<CulturaModel>> => {
 };
 
 export const findOneCultura = async (id: string): Promise<CulturaModel> => {
-  return (await getCulturas()).find(id);
+  return (await (await getCulturas()).query(Q.where("id_cultura", id))).slice(-1)[0]
 };
 
 export const findAllCulturaById = async (userId: string): Promise<CulturaModel[]> => {
@@ -61,7 +61,7 @@ export const findAllPluviometriasById = async (idCultura: string): Promise<Pluvi
   return pluviometrias
 }
 
-export const PullCreateCultura = async (culturas : PullCultura[]) => {
+export const PullCreateCultura = async (culturas: PullCultura[]) => {
   culturas.forEach(async culturaDto => {
     try {
       await database.write(async () => {
@@ -164,16 +164,16 @@ export interface PullCultura {
 
 export const pullUpdateCultura = async (culturasDto: PullCultura[]) => {
   culturasDto.forEach(async culturaDto => {
-    const collection : Collection<CulturaModel> = await getCulturas()
-  
+    const collection: Collection<CulturaModel> = await getCulturas()
+
     const cultivo = (await collection.query(Q.where("id_cultura", culturaDto.id_cultura), take(1))).slice(-1)
-  
+
     const time = formatInTimeZone(
       new Date(),
       'America/Sao_Paulo',
       "yyyy-MM-dd'T'HH:mm:ssXXX",
     );
-  
+
     await database.write(async () => {
       await cultivo[0].update(updateCultura => {
         (updateCultura.latitude = culturaDto.latitude),
@@ -197,11 +197,8 @@ export const deleteCultura = async (id: string) => {
   const cultura = await findOneCultura(id);
   await database.write(async () => {
     await cultura.markAsDeleted();
-    await cultura.destroyPermanently();
   });
-  await fetch(`${BASE_URL}/cultura/${id}`, {
-    method: 'DELETE',
-  });
+  mySync(cultura.userId)
 };
 
 export async function getLastUpdate(userId: string): Promise<CulturaModel[]> {
@@ -292,6 +289,33 @@ export async function getLastUpdate(userId: string): Promise<CulturaModel[]> {
 export async function mySync(userId: string) {
   await synchronize({
     database,
+    pushChanges: async ({ changes }) => {
+      const lastUpdate = await getLastUpdate(userId)
+      console.log("LAST UPDATE:")
+  
+      const data = {
+        changes: {
+          cultura: changes.cultura
+        },
+        timestamp: changes.timestamp
+      }
+      console.log(data)
+  
+      console.log("\n\n\n\n")
+      console.log(changes)
+  
+      // console.log(moment.unix(lastPulledAt).toDate())
+      const response = await axios.post(
+        `${BASE_URL}/cultura/sync`,
+        data
+      );
+  
+      console.log(`resposta: ${response}`);
+  
+      if (!(response.status == 200)) {
+        throw new Error(await response.data);
+      }
+    },
     pullChanges: async () => {
       console.log(`${BASE_URL}/cultura/sync/${userId}/${await getTimeStamp(userId)}`);
 
@@ -311,24 +335,7 @@ export async function mySync(userId: string) {
 
       return { changes, timestamp };
     },
-
-    pushChanges: async ({ changes }) => {
-      const lastUpdate = await getLastUpdate(userId)
-      console.log("LAST UPDATE:")
-      console.log(new Date(lastUpdate[0].lastUpdate))
-
-      // console.log(moment.unix(lastPulledAt).toDate())
-      const response = await axios.post(
-        `${BASE_URL}/cultura/sync`,
-        changes
-      );
-
-      console.log(`resposta: ${response}`);
-
-      if (!(response.status == 200)) {
-        throw new Error(await response.data);
-      }
-    },
     migrationsEnabledAtVersion: 1,
   });
+
 }
