@@ -3,21 +3,19 @@
 import React, { useEffect, useState } from 'react';
 import { FlatList, Text, View } from 'react-native';
 import { style } from './styles';
-import { CardHome } from '../../components/CardHome/cardHome';
+import EnhancedCardHome from '../../components/CardHome/cardHome';
 import { useAuth } from '../../context/AuthContext';
 import CulturasModel from '../../models/Cultura';
 import { findAllCulturaById } from '../../services/watermelon';
 import { withObservables } from '@nozbe/watermelondb/react'
+import SyncComponent from '../../components/syncComponent/syncComponent';
 
-const enhance = withObservables(['cultura'], ({ cultura }) => ({
-  cultura
-}));
 
-const enhanceCulturas = enhance(CardHome);
 
 export default function Home() {
   const { userId } = useAuth();
   const [culturas, setCulturas] = useState<CulturasModel[]>([])
+  const [contador, setContador] = useState<number>(0)
   // const {cultivos, fetchCultivos} = useCultivoContext();
 
   const fetchCulturas = async (id: string) => {
@@ -33,11 +31,15 @@ export default function Home() {
     if (userId) {
       fetchCulturas(userId);
     }
-  }, [culturas]);
+    const numContador = contador+1
+    console.log("rodada: "+ numContador)
+    setContador(numContador)
+  }, []);
 
 
   return (
     <View style={style.container}>
+      <SyncComponent/>
       <View style={style.boxTop}>
         <Text style={style.titulo}>Pontos de Monitoramento</Text>
       </View>
@@ -46,7 +48,7 @@ export default function Home() {
           <FlatList
             data={culturas}
             renderItem={({ item, index }) => (
-              <CardHome
+              <EnhancedCardHome
                 key={index}
                 cultura={item}
               />

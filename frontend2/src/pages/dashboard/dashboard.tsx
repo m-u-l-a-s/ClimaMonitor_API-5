@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Alert,
   Button,
@@ -8,56 +8,53 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {CardDashbord} from '../../components/CardDashbord/cardDashbord';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import { CardDashbord } from '../../components/CardDashbord/cardDashbord';
 import Octicons from 'react-native-vector-icons/Octicons';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
-import {style} from './styles';
+import { style } from './styles';
 //import AsyncStorage from '@react-native-async-storage/async-storage';
-import {RootStackParamList} from '../../navigation/types';
-import {RouteProp, useRoute} from '@react-navigation/native';
+import { RootStackParamList } from '../../navigation/types';
+import { RouteProp, useRoute } from '@react-navigation/native';
 import BarChartPluviometria from '../../components/ChartPluvi/chartPluvi';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import {chartPluvi} from '../../@types/chartPluv';
-import {LineChart} from 'react-native-chart-kit';
+import { chartPluvi } from '../../@types/chartPluv';
+import { LineChart } from 'react-native-chart-kit';
+import { Pluviometria, Temperatura } from '../../@types/culturaDto';
+import { findAllPluviometriasById, findAllTemperaturasById } from '../../services/watermelon';
+import GraficoTemperaturas from '../../components/grafico_dashboard/GraficoTemp';
+import Timeline from '../../components/Timeline/timeline';
 
 const screenWidth = Dimensions.get('window').width;
 
 type DashboardRouteProp = RouteProp<RootStackParamList, 'Dashboard'>;
 
 export default function Dashboard() {
-  // const [temperatura, setTemperatura] = useState("")
-  // const [pluviometria, setPluviometria] = useState("")
-  // const [cultivo, setCultivoNome] = useState("")
-
-  // useEffect(() => {
-  //     const getData = async () => {
-  //         setCultivoNome(await AsyncStorage.getItem('cultura') ?? '');
-  //         setPluviometria(await AsyncStorage.getItem('pluviometria') ?? '');
-  //         setTemperatura(await AsyncStorage.getItem('temperatura') ?? '');
-  //     }
-
-  //         getData()
-  // }, []);
-
-  // const route = useRoute<DashboardRouteProp>();
-  // const { temperatura, pluviometria, cultura } = route.params;
-
   const route = useRoute<DashboardRouteProp>();
-  const {cultura} = route.params;
-
+  const { cultura } = route.params;
+  const [dataInicial, setDataInicial] = useState<Date>(new Date())
   const [dataEscolhida, setDataEscolhida] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [chartData, setChartData] = useState<chartPluvi>({
     labels: [],
     values: [],
   });
+  const [temperaturasW, setTemperaturasW] = useState<Temperatura[]>([])
+  const [PluviometriaW, setPluviometriaW] = useState<Pluviometria[]>([])
+
+
+  const getData = async () => {
+    const temp = await findAllTemperaturasById(cultura.id_cultura)
+    const pluvi = await findAllPluviometriasById(cultura.id_cultura)
+    setDataInicial(pluvi[0].data)
+    setTemperaturasW(temp)
+    setPluviometriaW(pluvi)
+  }
+
 
   const onShowDatePicker = () => {
     setShowDatePicker(true);
   };
 
-  const dataInicial = new Date(cultura.pluviometrias[0]?.data);
 
   const onDateChange = (
     event: any,
@@ -69,74 +66,102 @@ export default function Dashboard() {
     }
   };
 
+
   useEffect(() => {
-    const filteredData = cultura.pluviometrias.filter(item => {
-      const itemDate = new Date(item.data);
-      return (
-        itemDate.getMonth() === dataEscolhida.getMonth() &&
-        itemDate.getFullYear() === dataEscolhida.getFullYear()
-      );
-    });
+    getData()
+  }, [cultura])
 
-    const semana = [0, 0, 0, 0];
-    filteredData.forEach(item => {
-      const day = new Date(item.data).getDate();
-      if (day >= 1 && day <= 7) semana[0] += item.pluviometria;
-      else if (day >= 8 && day <= 14) semana[1] += item.pluviometria;
-      else if (day >= 15 && day <= 21) semana[2] += item.pluviometria;
-      else if (day >= 22 && day <= 31) semana[3] += item.pluviometria;
-    });
+  // if (PluviometriaW.length != 0 && temperaturasW.length != 0) {
+  //   const filteredData = PluviometriaW.filter(item => {
+  //     return (
+  //       item.data.getMonth() === dataEscolhida.getMonth() &&
+  //       item.data.getFullYear() === dataEscolhida.getFullYear()
+  //     );
+  //   });
 
-    const semanaFormatada = semana.map(value => parseFloat(value.toFixed(1)));
+  //   const semana = [0, 0, 0, 0];
+  //   filteredData.forEach(item => {
+  //     const day = item.data.getDate();
+  //     if (day >= 1 && day <= 7) semana[0] += item.pluviometria;
+  //     else if (day >= 8 && day <= 14) semana[1] += item.pluviometria;
+  //     else if (day >= 15 && day <= 21) semana[2] += item.pluviometria;
+  //     else if (day >= 22 && day <= 31) semana[3] += item.pluviometria;
+  //     const semanaFormatada = semana.map(value => parseFloat(value.toFixed(1)));
+  //     setChartData({
+  //       labels: ['1-7', '8-14', '15-21', '22-31'],
+  //       values: semanaFormatada,
+  //     })
+  //   });
 
-    setChartData({
-      labels: ['1-7', '8-14', '15-21', '22-31'],
-      values: semanaFormatada,
-    });
-  }, [dataEscolhida, cultura]);
+  // }
 
-  let temperaturas = cultura.temperaturas || [];
+  // const validTemperaturas = temperaturasW
+  //   .filter(temp => temp.data)
+  //   .sort((a, b) => (a.data as any) - (b.data as any));
 
-  const validTemperaturas = temperaturas
-    .filter(temp => temp.data)
-    .sort((a, b) => (new Date(a.data) as any) - (new Date(b.data) as any));
+  // const lineChartData = {
+  //   labels: validTemperaturas.map(temp =>
+  //     temp.data.toLocaleDateString('pt-BR'),
+  //   ),
+  //   datasets: [
+  //     {
+  //       data: validTemperaturas.map(temp => temp.temperatura_media),
+  //       color: (opacity = 1) => `rgba(0, 128, 255, ${opacity})`,  // Cor laranja
+  //       strokeWidth: 3,
+  //     },
+  //     {
+  //       data: validTemperaturas.map(() => cultura.temperatura_min),
+  //       color: (opacity = 0) => `rgba(0, 255, 0, ${opacity})`,
+  //       strokeWidth: 3,
+  //       withDots: false,
+  //     },
+  //     {
+  //       data: validTemperaturas.map(() => cultura.temperatura_max),
+  //       color: (opacity = 0) => `rgba(255, 0, 0, ${opacity})`,
+  //       strokeWidth: 3,
+  //       withDots: false,
+  //     },
+  //   ],
+  // };
 
-  const lineChartData = {
-    labels: validTemperaturas.map(temp =>
-      new Date(temp.data).toLocaleDateString('pt-BR'),
-    ),
-    datasets: [
+  // const handleDataPointClick = (data: { index: number }) => {
+  //   const index = data.index;
+  //   const clickedTemperature = validTemperaturas[index]?.temperatura_media;
+  //   if (clickedTemperature !== undefined) {
+  //     Alert.alert(
+  //       'Temperatura Média',
+  //       `Temperatura: ${clickedTemperature} °C`,
+  //       [{ text: 'OK' }],
+  //     );
+  //   }
+  // };
+
+  let tempData = []
+
+  if (temperaturasW.length == 0) {
+    tempData = [
       {
-        data: validTemperaturas.map(temp => temp.temperatura_media),
-        color: (opacity = 1) => `rgba(0, 128, 255, ${opacity})`, // Cor laranja
-        strokeWidth: 3,
+        data: new Date(2024, 10, 25),
+        temperatura_media: 22,
+        temperatura_max: 30,
+        temperatura_min: 15,
       },
       {
-        data: validTemperaturas.map(() => cultura.temperatura_min),
-        color: (opacity = 0) => `rgba(0, 255, 0, ${opacity})`,
-        strokeWidth: 3,
-        withDots: false,
+        data: new Date(2024, 10, 26),
+        temperatura_media: 24,
+        temperatura_max: 32,
+        temperatura_min: 18,
       },
       {
-        data: validTemperaturas.map(() => cultura.temperatura_max),
-        color: (opacity = 0) => `rgba(255, 0, 0, ${opacity})`,
-        strokeWidth: 3,
-        withDots: false,
+        data: new Date(2024, 10, 27),
+        temperatura_media: 26,
+        temperatura_max: 33,
+        temperatura_min: 19,
       },
-    ],
-  };
-
-  const handleDataPointClick = (data: {index: number}) => {
-    const index = data.index;
-    const clickedTemperature = validTemperaturas[index]?.temperatura_media;
-    if (clickedTemperature !== undefined) {
-      Alert.alert(
-        'Temperatura Média',
-        `Temperatura: ${clickedTemperature} °C`,
-        [{text: 'OK'}],
-      );
-    }
-  };
+    ]
+  } else {
+    tempData = temperaturasW
+  }
 
   return (
     <ScrollView>
@@ -148,8 +173,8 @@ export default function Dashboard() {
           <CardDashbord
             title1="Temperatura Máx"
             valor={
-              cultura.temperaturas && cultura.temperaturas.length != 0
-                ? cultura.temperaturas.slice(-1)[0].temperatura_max.toString()
+              temperaturasW && temperaturasW.length != 0
+                ? temperaturasW.slice(-1)[0].temperatura_max.toString()
                 : '...'
             }
             IconName="sun"
@@ -160,8 +185,8 @@ export default function Dashboard() {
           <CardDashbord
             title1="Temperatura Min"
             valor={
-              cultura.temperaturas && cultura.temperaturas.length != 0
-                ? cultura.temperaturas.slice(-1)[0].temperatura_min.toString()
+              temperaturasW && temperaturasW.length != 0
+                ? temperaturasW.slice(-1)[0].temperatura_min.toString()
                 : '...'
             }
             IconName="cloud-rain"
@@ -174,8 +199,8 @@ export default function Dashboard() {
           <CardDashbord
             title1="Temperatura Média"
             valor={
-              cultura.temperaturas && cultura.temperaturas.length != 0
-                ? cultura.temperaturas.slice(-1)[0].temperatura_media.toString()
+              temperaturasW && temperaturasW.length != 0
+                ? temperaturasW.slice(-1)[0].temperatura_media.toString()
                 : '...'
             }
             IconName="sun"
@@ -186,8 +211,8 @@ export default function Dashboard() {
           <CardDashbord
             title1="Chuva"
             valor={
-              cultura.pluviometrias && cultura.pluviometrias.length != 0
-                ? cultura.pluviometrias.slice(-1)[0].pluviometria.toString()
+              PluviometriaW && PluviometriaW.length != 0
+                ? PluviometriaW.slice(-1)[0].pluviometria.toString()
                 : '...'
             }
             IconName="cloud-rain"
@@ -196,52 +221,15 @@ export default function Dashboard() {
           />
         </View>
 
-        <Text style={{fontSize: 22, color: '#333', marginVertical: 30}}>
+        <Text style={{ fontSize: 22, color: '#333', marginVertical: 30 }}>
           Temperaturas (°C)
         </Text>
 
         <ScrollView horizontal={true}>
-          <LineChart
-            data={lineChartData}
-            width={screenWidth * 4}
-            height={500}
-            fromZero={true}
-            chartConfig={{
-              backgroundGradientFrom: '#add8e6',
-              backgroundGradientTo: '#EAF8E9',
-              decimalPlaces: 1,
-              color: (opacity = 1) => `rgba(1, 33, 105, ${opacity})`,
-              labelColor: (opacity = 1) => `rgba(1, 33, 105, ${opacity})`,
-              style: {
-                borderRadius: 16,
-              },
-              propsForLabels: {
-                fontSize: 15,
-              },
-              propsForVerticalLabels: {
-                fontSize: 15,
-              },
-              propsForDots: {
-                r: '5',
-                strokeWidth: '2',
-                stroke: '#084d6e',
-                fill: '#084d6e',
-              },
-            }}
-            style={{
-              borderWidth: 1,
-              borderColor: '#fffff',
-              borderRadius: 5,
-            }}
-            withVerticalLabels={true}
-            withHorizontalLabels={true}
-            bezier
-            verticalLabelRotation={90} // Rotaciona as labels do eixo X
-            onDataPointClick={handleDataPointClick} // Adiciona evento de clique
-          />
+          <GraficoTemperaturas temperaturas={tempData} temperatura_max={cultura.temperatura_max} temperatura_min={cultura.temperatura_min} />
         </ScrollView>
 
-        <View style={style.pluvi}>
+        {/* <View style={style.pluvi}>
           <View style={style.tituloPluvi}>
             <Text style={style.tituloTexto}>Pluviometria (mm)</Text>
 
@@ -249,30 +237,32 @@ export default function Dashboard() {
               <Text style={style.buttonText}>Selecionar Mês</Text>
             </TouchableOpacity>
 
-            {/* <Button title="Selecionar Mês" onPress={onShowDatePicker} /> */}
+            <Button title="Selecionar Mês" onPress={onShowDatePicker} />
 
             {showDatePicker && (
               <DateTimePicker
                 value={dataEscolhida}
                 mode="date"
                 display="default"
-                onChange={onDateChange}
+                // onChange={(e) => onDateChange(e)}
                 minimumDate={dataInicial}
                 maximumDate={new Date()} // Para impedir a seleção de datas futuras
               />
             )}
           </View>
           <BarChartPluviometria data={chartData} />
-        </View>
-        {/* <View style={{alignItems: 'center', marginTop: 20}}>
-        <Text style={{fontSize: 20, marginBottom: 10, color: 'black'}}>
-          Timeline - Dias Anteriores
-        </Text>
-        <Timeline
-          temperatures={validTemperaturas}
-          pluviometries={pluviometrias}
-        />
-      </View> */}
+        </View> */}
+
+
+        {/* <View style={{ alignItems: 'center', marginTop: 20 }}>
+          <Text style={{ fontSize: 20, marginBottom: 10, color: 'black' }}>
+            Timeline - Dias Anteriores
+          </Text>
+          <Timeline
+            temperatures={ }
+            pluviometries={ }
+          />
+        </View> */}
       </View>
     </ScrollView>
   );

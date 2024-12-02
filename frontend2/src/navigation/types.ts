@@ -1,4 +1,4 @@
-import {Cultivo} from '../@types/culturaDto';
+import {Cultivo, Pluviometria, Temperatura} from '../@types/culturaDto';
 import CulturasModel from '../models/Cultura';
 
 export type RootStackParamList = {

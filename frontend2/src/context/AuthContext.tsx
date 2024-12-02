@@ -20,17 +20,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [userId, setUserId] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
 
-  async function sincronizarDados() {
-    if (userId) {
-      await mySync(userId)
-    }
-  }
+  // async function sincronizarDados() {
+  //   if (userId) {
+  //     await mySync(userId)
+  //   }
+  // }
 
-  useEffect(() => {
-    if (userId) {
-      sincronizarDados()
-    }
-  }, [userId])
+  // useEffect(() => {
+  //     sincronizarDados()
+  // }, [userId])
 
   const setUser = (id: string, token: string) => {
     setUserId(id);

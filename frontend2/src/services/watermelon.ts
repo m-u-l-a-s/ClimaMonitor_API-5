@@ -1,13 +1,15 @@
 import { synchronize } from '@nozbe/watermelondb/sync';
 import { Collection, Model, Q } from '@nozbe/watermelondb';
-import { Cultivo } from '../@types/culturaDto';
+import { Cultivo, Pluviometria, Temperatura } from '../@types/culturaDto';
 import { database } from '../database';
 import Cultura from '../models/Cultura';
 // import { BASE_URL, getTimeStamp } from '../variables';
-import { BASE_URL} from '../variables';
+import { BASE_URL, getTimeStamp } from '../variables';
 import { formatInTimeZone } from 'date-fns-tz';
 import axios from 'axios';
 import { NotificacaoType } from '../@types/notificacaoDto';
+import TemperaturaModel from '../models/Temperatura';
+import PluviometriaModel from '../models/Pluviometria';
 
 export const getCulturas = async (): Promise<Collection<Cultura>> => {
   return database.get('cultura');
@@ -22,6 +24,39 @@ export const findAllCulturaById = async (userId: string): Promise<Cultura[]> => 
   const allCulturas = await cultura.query(Q.where("user_id", userId))
   return allCulturas;
 };
+
+export const findAllTemperaturasById = async (idCultura: string): Promise<Temperatura[]> => {
+  const temperaturaT: Collection<TemperaturaModel> = database.get("temperatura")
+  const temperaturas: Temperatura[] = []
+  const temperaturaQ = (await temperaturaT.query(Q.where("id_cultura", idCultura))).sort((a, b) => new Date(a.data).getTime() - new Date(b.data).getTime());
+
+  temperaturaQ.map(temp => {
+    temperaturas.push({
+      data: new Date(temp.data),
+      temperatura_max: temp.temperatura_max,
+      temperatura_min: temp.temperatura_min,
+      temperatura_media: temp.temperatura_media,
+    })
+  })
+
+  return temperaturas
+}
+
+export const findAllPluviometriasById = async (idCultura: string): Promise<Pluviometria[]> => {
+  const pluviometriaT: Collection<PluviometriaModel> = database.get("pluviometria")
+  const pluviometrias: Pluviometria[] = []
+  const pluviometriaQ = (await pluviometriaT.query(Q.where("id_cultura", idCultura))).sort((a, b) => new Date(a.data).getTime() - new Date(b.data).getTime())
+
+  pluviometriaQ.map(pluvi => {
+    pluviometrias.push({
+      data: new Date(pluvi.data),
+      pluviometria: pluvi.pluviometria
+    })
+  })
+
+
+  return pluviometrias
+}
 
 export const createNewCultura = async (culturaDto: Cultivo) => {
   try {
@@ -88,9 +123,9 @@ export async function getLastUpdate(userId: string): Promise<Cultura[]> {
   const cultura = await getCulturas();
   const lastUpdate = await cultura
     .query(
-      Q.sortBy('lastUpdate', Q.desc),
+      Q.sortBy('last_update_mongo', Q.desc),
       Q.take(1),
-      Q.where("userId", userId)
+      Q.where("user_id", userId)
     )
     .fetch();
   return lastUpdate;
@@ -164,13 +199,12 @@ export async function getLastUpdate(userId: string): Promise<Cultura[]> {
 export async function mySync(userId: string) {
   await synchronize({
     database,
-    pullChanges: async ({ lastPulledAt }) => {
-      console.log(`${BASE_URL}/cultura/sync`);
+    pullChanges: async () => {
+      console.log(`${BASE_URL}/cultura/sync/${userId}/${await getTimeStamp(userId)}`);
 
       const response = await fetch(
-        `${BASE_URL}/cultura/sync/${userId}`,
+        `${BASE_URL}/cultura/sync/${userId}/${await getTimeStamp(userId)}`,
       );
-      console.log(response);
 
       if (!response.ok) {
         throw new Error(await response.text());

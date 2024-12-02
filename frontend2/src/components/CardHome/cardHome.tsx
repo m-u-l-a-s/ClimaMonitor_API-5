@@ -1,14 +1,16 @@
 // src/components/CardHome.tsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, Modal, Alert } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { style } from './styles';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../navigation/types';
-import { deleteCultura } from '../../services/watermelon';
+import { deleteCultura, findAllPluviometriasById, findAllTemperaturasById } from '../../services/watermelon';
 import CulturasModel from '../../models/Cultura';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import { withObservables } from '@nozbe/watermelondb/react'
+import { Pluviometria, Temperatura } from '../../@types/culturaDto';
+
 
 type IconComponent = React.ComponentType<React.ComponentProps<typeof MaterialIcons>>;
 
@@ -16,14 +18,16 @@ type IconComponent = React.ComponentType<React.ComponentProps<typeof MaterialIco
 
 type DashboardScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Dashboard'>;
 interface Props {
-    cultura: CulturasModel
+    cultura: CulturasModel,
+    temperaturas: Temperatura,
+    pluviometria: Pluviometria
 }
 
 
-export const CardHome = ({ cultura }: Props) => {
+const CardHome = ({ cultura }: Props) => {
     const navigation = useNavigation<DashboardScreenNavigationProp>();
     const [modalVisible, setModalVisible] = useState(false);
-
+    
     const handleDelete = async () => {
         setModalVisible(false);
         try {
@@ -34,10 +38,10 @@ export const CardHome = ({ cultura }: Props) => {
             Alert.alert("Erro ao excluir cultura.");
         }
     };
-
+    
     return (
         <View style={style.container}>
-            <TouchableOpacity style={style.containerTexto} onPress={() => navigation.navigate("Dashboard", { cultura: cultura })}>
+            <TouchableOpacity style={style.containerTexto} onPress={async () => navigation.navigate("Dashboard", { cultura: cultura })}>
                 <Text style={style.text}>{cultura.nome_cultivo}</Text>
             </TouchableOpacity>
 
@@ -50,18 +54,18 @@ export const CardHome = ({ cultura }: Props) => {
                 transparent={true}
                 visible={modalVisible}
                 onRequestClose={() => setModalVisible(false)}
-            >
+                >
                 <View style={style.modalOverlay}>
                     <View style={style.modalContent}>
                         {/* <TouchableOpacity onPress={() => { setModalVisible(false); navigation.navigate('Rota1'); }}>
                             <Text style={style.modalText}>Relatório</Text>
-                        </TouchableOpacity> */}
+                            </TouchableOpacity> */}
                         {/* <TouchableOpacity onPress={() => { 
                             setModalVisible(false); 
                             navigation.navigate('EditarCultivo', { cultivoId: cultura.id });
-                        }}>
+                            }}>
                             <Text style={style.modalText}>Editar</Text>
-                        </TouchableOpacity> */}
+                            </TouchableOpacity> */}
                         <TouchableOpacity onPress={handleDelete}>
                             <Text style={style.modalText}>Excluir</Text>
                         </TouchableOpacity>
@@ -74,3 +78,18 @@ export const CardHome = ({ cultura }: Props) => {
         </View>
     );
 };
+
+const enhance = withObservables(['cultura'], ({ cultura }) => ({
+    cultura
+  }))
+  
+  const EnhancedCardHome = enhance(CardHome)
+  export default EnhancedCardHome
+
+// const enhance = withObservables(['cultura'], ({ cultura }) => ({
+//     cultura
+//   }));
+  
+// const enhacedCardHome = enhance(CardHome);
+
+// export default enhacedCardHome
