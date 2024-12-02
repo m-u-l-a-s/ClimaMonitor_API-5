@@ -1,38 +1,40 @@
 // src/pages/editar/EditarCultivo.tsx
 import React, { useEffect, useState } from "react";
 import { ScrollView, Text, TextInput, Button, Alert } from "react-native";
-import { useRoute, useNavigation } from "@react-navigation/native"; // Import useNavigation hook
+import { useRoute, useNavigation, RouteProp } from "@react-navigation/native"; // Import useNavigation hook
 import styles from '../cadastro/styles';
-import { BASE_URL } from '../../variables';
+import CulturasModel, { Cultura } from "../../models/Cultura";
+import { RootStackParamList } from "../../navigation/types";
+import { updateCultura } from "../../services/watermelon";
+
+
+type EditarCulturaRouteProps = RouteProp<RootStackParamList, "EditarCultura">;
+type HomeRouteProps = RouteProp<RootStackParamList, "Home">;
 
 const EditarCultivo = () => {
-    const route = useRoute();
-    const navigation = useNavigation();  // Initialize the navigation hook
-    const cultivo = route.params?.cultivoId; // Now 'cultivoId' contains the entire props object
-
-    // Check if the cultivo object has an id (log for debugging)
-    console.log("Cultivo object received:", cultivo);
-
+    const route = useRoute<EditarCulturaRouteProps>();
+    const navigation = useNavigation<HomeRouteProps>();
+    const cultura: CulturasModel = route.params?.cultura;
     // Initialize state based on the passed data
-    const [latitude, setLatitude] = useState(cultivo?.ponto_cultivo.latitude?.toString() || "");
-    const [longitude, setLongitude] = useState(cultivo?.ponto_cultivo.longitude?.toString() || "");
-    const [nome_cultivo, setNomeCultivo] = useState(cultivo?.nome_cultivo || "");
-    const [maxTemp, setMaxTemp] = useState(cultivo?.temperatura_max?.toString() || "");
-    const [minTemp, setMinTemp] = useState(cultivo?.temperatura_min?.toString() || "");
-    const [maxPluvi, setMaxPluvi] = useState(cultivo?.pluviometria_max?.toString() || "");
-    const [minPluvi, setMinPluvi] = useState(cultivo?.pluviometria_min?.toString() || "");
+    const [latitude, setLatitude] = useState(cultura.latitude?.toString() || "");
+    const [longitude, setLongitude] = useState(cultura.longitude?.toString() || "");
+    const [nome_cultivo, setNomeCultivo] = useState(cultura.nome_cultivo || "");
+    const [maxTemp, setMaxTemp] = useState(cultura.temperatura_max?.toString() || "");
+    const [minTemp, setMinTemp] = useState(cultura.temperatura_min?.toString() || "");
+    const [maxPluvi, setMaxPluvi] = useState(cultura.pluviometria_max?.toString() || "");
+    const [minPluvi, setMinPluvi] = useState(cultura.pluviometria_min?.toString() || "");
 
     useEffect(() => {
-        if (cultivo) {
-            setLatitude(cultivo.ponto_cultivo.latitude?.toString() || "");
-            setLongitude(cultivo.ponto_cultivo.longitude?.toString() || "");
-            setNomeCultivo(cultivo.nome_cultivo);
-            setMaxTemp(cultivo.temperatura_max?.toString() || "");
-            setMinTemp(cultivo.temperatura_min?.toString() || "");
-            setMaxPluvi(cultivo.pluviometria_max?.toString() || "");
-            setMinPluvi(cultivo.pluviometria_min?.toString() || "");
+        if (cultura) {
+            setLatitude(cultura.latitude?.toString() || "");
+            setLongitude(cultura.longitude?.toString() || "");
+            setNomeCultivo(cultura.nome_cultivo);
+            setMaxTemp(cultura.temperatura_max?.toString() || "");
+            setMinTemp(cultura.temperatura_min?.toString() || "");
+            setMaxPluvi(cultura.pluviometria_max?.toString() || "");
+            setMinPluvi(cultura.pluviometria_min?.toString() || "");
         }
-    }, [cultivo]); // Only run this effect if the 'cultivo' object changes
+    }, [cultura]); // Only run this effect if the 'cultivo' object changes
 
     const handleUpdate = async () => {
         if (!latitude || !longitude || !nome_cultivo || !maxTemp || !minTemp || !maxPluvi || !minPluvi) {
@@ -40,48 +42,46 @@ const EditarCultivo = () => {
             return;
         }
 
-        const updatedData = {
-            nome_cultivo,
-            ponto_cultivo: { latitude: parseFloat(latitude), longitude: parseFloat(longitude) },
+        const culturaUpdate: Cultura = {
+            nome_cultivo: nome_cultivo,
+            latitude: latitude,
+            longitude: longitude,
             temperatura_max: parseFloat(maxTemp),
             temperatura_min: parseFloat(minTemp),
             pluviometria_max: parseFloat(maxPluvi),
             pluviometria_min: parseFloat(minPluvi),
-            pluviometrias: cultivo.pluviometrias,
-            temperaturas: cultivo.temperaturas,
-            alertasPluvi: cultivo.alertasPluv,
-            alertasTemp: cultivo.alertasTemp,
-            createdAt: cultivo.createdAt,  // Ensure createdAt and deletedAt are correct
-            deletedAt: cultivo.deletedAt,
-            lastUpdate: new Date().toISOString()
-        };
-
-        // Debug: check the id being used
-        console.log("Updating cultivo with ID:", cultivo._id); // Ensure '_id' is correct here
-
-        try {
-            // Adjust the API URL to match the expected format
-            const response = await fetch(`${BASE_URL}/cultura/${cultivo._id}/`, { // Notice the trailing slash
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(updatedData),
-            });
-
-            if (!response.ok) {
-                const errorDetails = await response.json(); // Get detailed error response
-                throw new Error(`Erro ao atualizar a cultura: ${errorDetails.message || 'Erro desconhecido'}`);
-            }
-
-            Alert.alert("Sucesso", "Cultura atualizada com sucesso!");
-
-            navigation.navigate('Home');
-
-        } catch (error) {
-            Alert.alert("Erro", `Erro ao atualizar a cultura: ${error.message}`);
-            console.error(error);
+            id_cultura: cultura.id_cultura,
+            id: cultura.id,
+            user_id: cultura.userId
         }
+
+        await updateCultura(culturaUpdate)
+        // Debug: check the id being used
+        console.log("Updating cultivo with ID:", cultura.id_cultura); // Ensure '_id' is correct here
+        navigation.navigate("Home")
+        // try {
+        //     // Adjust the API URL to match the expected format
+        //     const response = await fetch(`${BASE_URL}/cultura/${cultura.id_cultura}/`, { // Notice the trailing slash
+        //         method: 'PUT',
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //         },
+        //         body: JSON.stringify(updatedData),
+        //     });
+
+        //     if (!response.ok) {
+        //         const errorDetails = await response.json(); // Get detailed error response
+        //         throw new Error(`Erro ao atualizar a cultura: ${errorDetails.message || 'Erro desconhecido'}`);
+        //     }
+
+        //     Alert.alert("Sucesso", "Cultura atualizada com sucesso!");
+
+        //     navigation.navigate("Home");
+
+        // } catch (error) {
+        //     Alert.alert("Erro", `Erro ao atualizar a cultura: ${error}`);
+        //     console.error(error);
+        // }
     };
 
     return (

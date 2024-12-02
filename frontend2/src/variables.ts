@@ -15,6 +15,5 @@ export const getTimeStamp = async (userId : string) => {
   }
 
   const result = new Date(lastUpdate[0].lastUpdate);
-  console.log('timestamp: ' + result);
   return `?lastPulledAt=${result.getTime() / 1000}`;
 };

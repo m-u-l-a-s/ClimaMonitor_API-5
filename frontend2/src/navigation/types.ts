@@ -15,4 +15,7 @@ export type RootStackParamList = {
   Relatorio:{
     cultura: Cultivo;
   };
+  EditarCultura: {
+    cultura: CulturasModel
+  };
 };

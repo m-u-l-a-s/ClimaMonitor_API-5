@@ -41,18 +41,14 @@ export interface Alerta {
 }
 
 export interface Cultura {
-  ponto_cultivo: Localizacao;
+  latitude : string;
+  longitude: string;
   nome_cultivo: string;
   temperatura_max: number;
   pluviometria_max: number;
   temperatura_min: number;
   pluviometria_min: number;
-  temperaturas: Temperatura[];
-  pluviometrias: Pluviometria[];
-  alertasTemp: Alerta[];
-  alertasPluvi: Alerta[];
-  lastUpdate: string;
-  createdAt: string;
-  deletedAt?: string;
-  userId: string;
+  user_id: string;
+  id_cultura: string;
+  id: string
 }
