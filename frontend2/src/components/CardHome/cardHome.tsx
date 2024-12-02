@@ -16,12 +16,14 @@ type IconComponent = React.ComponentType<React.ComponentProps<typeof MaterialIco
 
 type DashboardScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Dashboard'>;
 type EditarCulturaScreenNavigationProp = StackNavigationProp<RootStackParamList, 'EditarCultura'>;
+type RelatorioScreenNavigationProp = StackNavigationProp<RootStackParamList, "Relatorio">;
 interface Props {
     cultura: CulturasModel,
 }
 
 const CardHome = ({ cultura }: Props) => {
     const navigation = useNavigation<DashboardScreenNavigationProp>();
+    const navigationRelatorio = useNavigation<RelatorioScreenNavigationProp>();
     const navigationEditar = useNavigation<EditarCulturaScreenNavigationProp>()
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -63,9 +65,9 @@ const CardHome = ({ cultura }: Props) => {
                 <View style={style.modalOverlay}>
                     <View style={style.modalContent}>
                         {/* <TouchableOpacity onPress={() => { setModalVisible(false); navigation.navigate('Rota1'); }}> */}
-                        {/* <TouchableOpacity onPress={() => { setModalVisible(false); navigation.navigate('Relatorio', { cultura: props }); }}>
+                        <TouchableOpacity onPress={() => { setModalVisible(false); navigationRelatorio.navigate("Relatorio", { cultura: cultura }); }}>
                             <Text style={style.modalText}>Relatório</Text>
-                        </TouchableOpacity> */}
+                        </TouchableOpacity>
                         <TouchableOpacity onPress={async () => {
                             setModalVisible(false);
                             navigationEditar.navigate("EditarCultura", { cultura: cultura });

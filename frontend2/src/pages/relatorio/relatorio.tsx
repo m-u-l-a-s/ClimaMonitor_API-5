@@ -1,76 +1,37 @@
 import React, { useState, useEffect } from 'react';
-import { Text, ScrollView, Alert, View, ActivityIndicator } from 'react-native';
-import { BASE_URL } from '../../variables';
+import { Text, ScrollView, View,  } from 'react-native';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import styles from './styles';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import { Picker } from '@react-native-picker/picker';
 import { Temperatura, Pluviometria } from '../../@types/culturaDto'
+import { findAllPluviometriasById, findAllTemperaturasById } from '../../services/watermelon';
+import { RootStackParamList } from '../../navigation/types';
 
-type RelatorioRouteParams = {
-  cultura: {
-    _id: string;
-    nome_cultivo: string;
-    temperaturas: Temperatura[];
-    pluviometrias: { data: string; pluviometria: number }[];
-    temperatura_max: number;
-    temperatura_min: number;
-    pluviometria_max: number;
-    pluviometria_min: number;
-    alertasTemp: number;
-    alertasPluvi: number;
-    createdAt: string;
-    deletedAt?: string;
-  };
-};
-
+type RelatorioRouteProp = RouteProp<RootStackParamList, "Relatorio">;
 
 const Relatorio = () => {
-  // const route = useRoute<RouteProp<{ params: RelatorioRouteParams }, 'params'>>();
-  // const {cultura} = route.params;
 
-  // const [nome_cultivo, setNomeCultivo] = useState("");
-
-  // // Função para buscar os dados do cultivo
-  // const fetchCultivo = async () => {
-  //   try {
-  //     const response = await fetch(`${BASE_URL}/cultura/${cultura}`);
-  //     if (!response.ok) {
-  //       const errorText = await response.text();
-  //       throw new Error(`Erro ${response.status}: ${errorText}`);
-  //     }
-  //     const data = await response.json();
-  //     setNomeCultivo(data.nome_cultivo || 'Cultivo sem nome');
-  //   } catch (error) {
-  //     console.error('Erro ao buscar cultivo:', error);
-  //     Alert.alert('Erro', `Não foi possível carregar os dados do cultivo: ${(error as Error).message}`);
-  //   }
-  // };
-
-  // // Fetch inicial
-  // useEffect(() => {
-  //   if (cultura) {
-  //     console.log(cultura)
-  //     fetchCultivo();
-  //   }
-  // }, [cultura]);
-
-
-  const route = useRoute<RouteProp<{ params: RelatorioRouteParams }, 'params'>>();
-  const { cultura } = route.params;
+  const route = useRoute<RelatorioRouteProp>();
+  const { cultura }  = route.params;
+  const [temperaturas, setTemperaturas] = useState<Temperatura[]>([])
+  const [pluviometrias, setPluviometrias] = useState<Pluviometria[]>([])
 
   const {
     nome_cultivo,
-    temperaturas,
-    pluviometrias,
-    temperatura_max,
-    temperatura_min,
-    pluviometria_max,
-    pluviometria_min,
-    alertasTemp,
-    alertasPluvi,
   } = cultura;
+
+  const getData = async () => {
+    const temps = await findAllTemperaturasById(cultura.id_cultura)
+    const pluvis = await findAllPluviometriasById(cultura.id_cultura)
+    setTemperaturas(temps)
+    setPluviometrias(pluvis)
+  }
+
+  useEffect(() => {
+    getData()
+  }, [])
 
   //console.log('Dados do cultivo:', cultura);
 
@@ -86,8 +47,8 @@ const Relatorio = () => {
     let quantidadeTemperaturas = 0;
   
    
-    for (const temp of cultura.temperaturas) {
-      if (temp.data.startsWith(mesAno)) {
+    for (const temp of temperaturas) {
+      if ( `${temp.data.getFullYear()}-${temp.data.getMonth()}`.startsWith(mesAno)) {
         somaTemperaturas += temp.temperatura_media; 
         quantidadeTemperaturas++; 
       }
@@ -113,8 +74,8 @@ const Relatorio = () => {
     let quantidadePluviometria = 0;
   
     
-    for (const pluvi of cultura.pluviometrias) {
-      if (pluvi.data.startsWith(mesAno)) { 
+    for (const pluvi of pluviometrias) {
+      if ( `${pluvi.data.getFullYear()}-${pluvi.data.getMonth()}`.startsWith(mesAno) ) { 
         somaPluviometria += pluvi.pluviometria;
         quantidadePluviometria++;
       }
@@ -136,8 +97,8 @@ const contarDiasAcimaTempMax = (ano: number, mes: string) => {
   const mesAno = `${ano}-${mes}`;
   let contador = 0;
 
-  for (const temp of cultura.temperaturas) {
-    if (temp.data.startsWith(mesAno) && temp.temperatura_max > cultura.temperatura_max) {
+  for (const temp of temperaturas) {
+    if (`${temp.data.getFullYear()}-${temp.data.getMonth()}`.startsWith(mesAno) && temp.temperatura_max > cultura.temperatura_max) {
       contador++;
     }
   }
@@ -156,9 +117,9 @@ const contarDiasAbaixoTempMin = (ano: number, mes: string) => {
   const mesAno = `${ano}-${mes}`;
   let contador = 0;
 
-  for (const temp of cultura.temperaturas) {
+  for (const temp of temperaturas) {
     
-    if (temp.data.startsWith(mesAno) && temp.temperatura_min < cultura.temperatura_min) {
+    if (`${temp.data.getFullYear()}-${temp.data.getMonth()}`.startsWith(mesAno) && temp.temperatura_min < cultura.temperatura_min) {
       contador++;
     }
   }
@@ -176,8 +137,8 @@ const contarDiasAcimaPluviMax = (ano: number, mes: string) => {
   const mesAno = `${ano}-${mes}`;
   let contador = 0;
 
-  for (const pluvi of cultura.pluviometrias) {
-    if (pluvi.data.startsWith(mesAno) && pluvi.pluviometria > cultura.pluviometria_max) {
+  for (const pluvi of pluviometrias) {
+    if (`${pluvi.data.getFullYear()}-${pluvi.data.getMonth()}`.startsWith(mesAno) && pluvi.pluviometria > cultura.pluviometria_max) {
       contador++;
     }
   }
@@ -194,8 +155,8 @@ const contarDiasAbaixoPluviMin = (ano: number, mes: string) => {
   const mesAno = `${ano}-${mes}`;
   let contador = 0;
 
-  for (const pluvi of cultura.pluviometrias) {
-    if (pluvi.data.startsWith(mesAno) && pluvi.pluviometria < cultura.pluviometria_min) {
+  for (const pluvi of pluviometrias) {
+    if (`${pluvi.data.getFullYear()}-${pluvi.data.getMonth()}`.startsWith(mesAno) && pluvi.pluviometria < cultura.pluviometria_min) {
       contador++;
     }
   }
