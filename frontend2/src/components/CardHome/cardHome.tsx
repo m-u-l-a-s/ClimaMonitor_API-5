@@ -9,34 +9,30 @@ import { RootStackParamList } from '../../navigation/types';
 import { deleteCultura, findAllPluviometriasById, findAllTemperaturasById } from '../../services/watermelon';
 import CulturasModel from '../../models/Cultura';
 import { withObservables } from '@nozbe/watermelondb/react'
-import { Pluviometria, Temperatura } from '../../@types/culturaDto';
 
 
 type IconComponent = React.ComponentType<React.ComponentProps<typeof MaterialIcons>>;
 
 
 type DashboardScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Dashboard'>;
+type EditarCulturaScreenNavigationProp = StackNavigationProp<RootStackParamList, 'EditarCultura'>;
+type RelatorioScreenNavigationProp = StackNavigationProp<RootStackParamList, "Relatorio">;
 interface Props {
     cultura: CulturasModel,
-    temperaturas: Temperatura,
-    pluviometria: Pluviometria
 }
 
 const CardHome = ({ cultura }: Props) => {
     const navigation = useNavigation<DashboardScreenNavigationProp>();
+    const navigationRelatorio = useNavigation<RelatorioScreenNavigationProp>();
+    const navigationEditar = useNavigation<EditarCulturaScreenNavigationProp>()
     const [modalVisible, setModalVisible] = useState(false);
-    
+
     const handleDelete = async () => {
         setModalVisible(false); // Fecha o modal
         if (cultura.id_cultura) {
             try {
-            //     //vai deletar a cultura no backend
-            //     await deleteCulturaBackend(id); 
-            // console.log("Cultura excluída do MongoDB");
-
-            // Vai  Deletar no WatermelonDB
-            await deleteCulturaBackend(cultura.id_cultura); 
-            Alert.alert("Cultura excluída com sucesso!");
+                await deleteCultura(cultura.id_cultura);
+                Alert.alert("Cultura excluída com sucesso!");
             } catch (error) {
                 console.log("erro pego", error);
                 if (error instanceof Error) {
@@ -50,16 +46,6 @@ const CardHome = ({ cultura }: Props) => {
         }
     };
 
-    const deleteCulturaBackend = async (id: string) => {
-        try {
-            await deleteCultura(cultura.id_cultura);
-            Alert.alert("Cultura excluída com sucesso!", cultura.id_cultura);
-        } catch (error) {
-            console.error("Erro ao remover cultura no backend:", error);
-            throw error; 
-        }
-    };
-    
     return (
         <View style={style.container}>
             <TouchableOpacity style={style.containerTexto} onPress={async () => navigation.navigate("Dashboard", { cultura: cultura })}>
@@ -75,19 +61,19 @@ const CardHome = ({ cultura }: Props) => {
                 transparent={true}
                 visible={modalVisible}
                 onRequestClose={() => setModalVisible(false)}
-                >
+            >
                 <View style={style.modalOverlay}>
                     <View style={style.modalContent}>
-                        {/* <TouchableOpacity onPress={() => { setModalVisible(false); navigation.navigate('Rota1'); }}>
-                        <TouchableOpacity onPress={() => { setModalVisible(false); navigation.navigate('Relatorio', { cultura: props}); }}>
+                        {/* <TouchableOpacity onPress={() => { setModalVisible(false); navigation.navigate('Rota1'); }}> */}
+                        <TouchableOpacity onPress={() => { setModalVisible(false); navigationRelatorio.navigate("Relatorio", { cultura: cultura }); }}>
                             <Text style={style.modalText}>Relatório</Text>
-                            </TouchableOpacity> */}
-                        {/* <TouchableOpacity onPress={() => { 
-                            setModalVisible(false); 
-                            navigation.navigate('EditarCultivo', { cultivoId: cultura.id });
-                            }}>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={async () => {
+                            setModalVisible(false);
+                            navigationEditar.navigate("EditarCultura", { cultura: cultura });
+                        }}>
                             <Text style={style.modalText}>Editar</Text>
-                            </TouchableOpacity> */}
+                        </TouchableOpacity>
                         <TouchableOpacity onPress={handleDelete}>
                             <Text style={style.modalText}>Excluir</Text>
                         </TouchableOpacity>
@@ -103,15 +89,7 @@ const CardHome = ({ cultura }: Props) => {
 
 const enhance = withObservables(['cultura'], ({ cultura }) => ({
     cultura
-  }))
-  
-  const EnhancedCardHome = enhance(CardHome)
-  export default EnhancedCardHome
+}))
 
-// const enhance = withObservables(['cultura'], ({ cultura }) => ({
-//     cultura
-//   }));
-  
-// const enhacedCardHome = enhance(CardHome);
-
-// export default enhacedCardHome
+const EnhancedCardHome = enhance(CardHome)
+export default EnhancedCardHome

@@ -18,7 +18,7 @@ export const style = StyleSheet.create({
 
   titulo: {
     fontSize: 25,
-    marginTop: 30,
+    marginTop: 45,
     color: 'black',
   },
 

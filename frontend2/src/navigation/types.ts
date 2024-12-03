@@ -13,6 +13,9 @@ export type RootStackParamList = {
   Profile: undefined;
   Notificacao: undefined;
   Relatorio:{
-    cultura: Cultivo;
+    cultura: CulturasModel;
+  };
+  EditarCultura: {
+    cultura: CulturasModel
   };
 };
