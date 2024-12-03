@@ -198,7 +198,6 @@ export const deleteCultura = async (id: string) => {
   await database.write(async () => {
     await cultura.markAsDeleted();
   });
-  mySync(cultura.userId)
 };
 
 export async function getLastUpdate(userId: string): Promise<CulturaModel[]> {
@@ -290,9 +289,7 @@ export async function mySync(userId: string) {
   await synchronize({
     database,
     pushChanges: async ({ changes }) => {
-      const lastUpdate = await getLastUpdate(userId)
-      console.log("LAST UPDATE:")
-  
+      const lastUpdate = await getLastUpdate(userId)  
       const data = {
         changes: {
           cultura: changes.cultura
@@ -302,7 +299,7 @@ export async function mySync(userId: string) {
       console.log(data)
   
       console.log("\n\n\n\n")
-      console.log(changes)
+      console.log(changes["cultura"].deleted)
   
       // console.log(moment.unix(lastPulledAt).toDate())
       const response = await axios.post(
@@ -311,16 +308,17 @@ export async function mySync(userId: string) {
       );
   
       console.log(`resposta: ${response}`);
-  
-      if (!(response.status == 200)) {
-        throw new Error(await response.data);
-      }
     },
-    pullChanges: async () => {
+    pullChanges: async ({lastPulledAt}) => {
       console.log(`${BASE_URL}/cultura/sync/${userId}/${await getTimeStamp(userId)}`);
 
+      let req = ``
+      if (lastPulledAt) {
+        req = `?lastPulledAt=${lastPulledAt}`
+      }
+
       const response = await fetch(
-        `${BASE_URL}/cultura/sync/${userId}/${await getTimeStamp(userId)}`,
+        `${BASE_URL}/cultura/sync/${userId}/${req}`,
       );
 
       if (!response.ok) {

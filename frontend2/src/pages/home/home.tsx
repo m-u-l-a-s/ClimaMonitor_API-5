@@ -1,57 +1,31 @@
 /* eslint-disable react-native/no-inline-styles */
 // src/pages/home/home.tsx
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { FlatList, Text, View } from 'react-native';
 import { style } from './styles';
 import EnhancedCardHome from '../../components/CardHome/cardHome';
 import { useAuth } from '../../context/AuthContext';
-import CulturasModel from '../../models/Cultura';
-import { findAllCulturaById } from '../../services/watermelon';
-import { withObservables } from '@nozbe/watermelondb/react'
+import { withObservables } from '@nozbe/watermelondb/react';
 import SyncComponent from '../../components/syncComponent/syncComponent';
+import { Q } from '@nozbe/watermelondb';
+import CulturasModel from '../../models/Cultura';
+import { database } from '../../database';
 
-
-
-export default function Home() {
-  const { userId } = useAuth();
-  const [culturas, setCulturas] = useState<CulturasModel[]>([])
-  const [contador, setContador] = useState<number>(0)
-  // const {cultivos, fetchCultivos} = useCultivoContext();
-
-  const fetchCulturas = async (id: string) => {
-    try {
-      const allCulturas = await findAllCulturaById(id)
-      setCulturas(allCulturas);
-    } catch (error) {
-      console.error('Erro ao buscar as culturas:', error);
-    }
-  };
-
-  useEffect(() => {
-    if (userId) {
-      fetchCulturas(userId);
-    }
-    const numContador = contador+1
-    console.log("rodada: "+ numContador)
-    setContador(numContador)
-  }, []);
-
-
+function Home({ culturas }: { culturas: CulturasModel[] }) {
   return (
     <View style={style.container}>
-      <SyncComponent/>
+
       <View style={style.boxTop}>
         <Text style={style.titulo}>Pontos de Monitoramento</Text>
+        <SyncComponent />
       </View>
       <View style={style.boxMid}>
         <View style={style.containerCard}>
           <FlatList
             data={culturas}
+            keyExtractor={(item) => item.id}
             renderItem={({ item, index }) => (
-              <EnhancedCardHome
-                key={index}
-                cultura={item}
-              />
+              <EnhancedCardHome key={index} cultura={item} />
             )}
           />
         </View>
@@ -65,3 +39,24 @@ export default function Home() {
   );
 }
 
+const enhance = withObservables(['userId'], ({ userId }: { userId: string }) => ({
+  culturas: database
+    .get<CulturasModel>('cultura')
+    .query(Q.where('user_id', userId))
+    .observe(),
+}));
+
+export default function HomeWrapper() {
+  const { userId } = useAuth();
+
+  if (!userId) {
+    return (
+      <View style={style.container}>
+        <Text style={style.titulo}>Carregando...</Text>
+      </View>
+    );
+  }
+
+  const EnhancedHome = enhance(Home);
+  return <EnhancedHome userId={userId} />;
+}

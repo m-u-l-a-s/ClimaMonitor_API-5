@@ -7,6 +7,15 @@ import {useCultivoContext} from '../../context/CulturaContext';
 import styles from './styles';
 import {useAuth} from '../../context/AuthContext';
 import {useNavigation} from '@react-navigation/native';
+import { mySync } from '../../services/watermelon';
+
+function generateRandomId(): string {
+  const idLength = 16; // Comprimento desejado do ID
+  return Array.from({ length: idLength }, () =>
+    Math.random().toString(36).charAt(2) // Pega um caractere aleatório
+  ).join('');
+}
+
 
 const Cadastro = () => {
   const {userId} = useAuth();
@@ -36,6 +45,7 @@ const Cadastro = () => {
     }
 
     const data: Cultivo = {
+      id: generateRandomId(),
       nome_cultivo: nome_cultivo,
       ponto_cultivo: {latitude: latitude, longitude: longitude},
       temperatura_max: parseFloat(maxTemp),
@@ -50,6 +60,7 @@ const Cadastro = () => {
       deletedAt: '',
       lastUpdate: '',
       userId: userId || '',
+      
     };
 
     // try {
@@ -74,8 +85,8 @@ const Cadastro = () => {
       if (response.ok) {
         await response.json();
         Alert.alert('Success', 'Cadastro realizado com sucesso!');
-        await fetchCultivos(userId as string);
 
+        mySync(userId || "")
         setLatitude('');
         setLongitude('');
         setnome_cultivo('');
