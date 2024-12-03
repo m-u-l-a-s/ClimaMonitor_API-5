@@ -19,7 +19,7 @@ export const getCulturas = async (): Promise<Collection<CulturaModel>> => {
 };
 
 export const findOneCultura = async (id: string): Promise<CulturaModel> => {
-  return (await (await getCulturas()).query(Q.where("id_cultura", id))).slice(-1)[0]
+  return (await (await getCulturas()).query(Q.where("id", id))).slice(-1)[0]
 };
 
 export const findAllCulturaById = async (userId: string): Promise<CulturaModel[]> => {
@@ -65,7 +65,7 @@ export const PullCreateCultura = async (culturas: PullCultura[]) => {
   culturas.forEach(async culturaDto => {
     try {
       await database.write(async () => {
-        const culturaCollection = database.get<CulturaModel>('Cultura');
+        const culturaCollection = database.get<CulturaModel>('cultura');
         const time = formatInTimeZone(
           new Date(),
           'America/Sao_Paulo',
@@ -95,7 +95,7 @@ export const PullCreateCultura = async (culturas: PullCultura[]) => {
 export const createNewCultura = async (culturaDto: Cultivo) => {
   try {
     await database.write(async () => {
-      const culturaCollection = database.get<CulturaModel>('Cultura');
+      const culturaCollection = database.get<CulturaModel>('cultura');
       const time = formatInTimeZone(
         new Date(),
         'America/Sao_Paulo',
@@ -128,20 +128,21 @@ export const updateCultura = async (culturaDto: Cultura) => {
     "yyyy-MM-dd'T'HH:mm:ssXXX",
   );
 
+  console.log(cultivo)
+
   await database.write(async () => {
-    await cultivo.update(updateCultura => {
-      (updateCultura.latitude = culturaDto.latitude),
-        (updateCultura.longitude = culturaDto.longitude),
-        (updateCultura.nome_cultivo = culturaDto.nome_cultivo),
-        (updateCultura.temperatura_max = culturaDto.temperatura_max),
-        (updateCultura.temperatura_min = culturaDto.temperatura_min),
-        (updateCultura.pluviometria_max = culturaDto.pluviometria_max),
-        (updateCultura.pluviometria_min = culturaDto.pluviometria_min),
-        (updateCultura.lastUpdate = time)
+    await cultivo.update(updatedCultura => {
+      (updatedCultura.latitude = culturaDto.latitude),
+        (updatedCultura.longitude = culturaDto.longitude),
+        (updatedCultura.nome_cultivo = culturaDto.nome_cultivo),
+        (updatedCultura.temperatura_max = culturaDto.temperatura_max),
+        (updatedCultura.temperatura_min = culturaDto.temperatura_min),
+        (updatedCultura.pluviometria_max = culturaDto.pluviometria_max),
+        (updatedCultura.pluviometria_min = culturaDto.pluviometria_min),
+        (updatedCultura.lastUpdate = time)
     }).then(async resp => {
       console.log("Cultura atualizada:")
       console.log(resp)
-      mySync(culturaDto.user_id)
     });
   });
 };

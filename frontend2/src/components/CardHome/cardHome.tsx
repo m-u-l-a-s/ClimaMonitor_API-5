@@ -31,7 +31,7 @@ const CardHome = ({ cultura }: Props) => {
         setModalVisible(false); // Fecha o modal
         if (cultura.id_cultura) {
             try {
-                await deleteCultura(cultura.id_cultura);
+                await deleteCultura(cultura.id);
                 Alert.alert("Cultura excluída com sucesso!");
             } catch (error) {
                 console.log("erro pego", error);
