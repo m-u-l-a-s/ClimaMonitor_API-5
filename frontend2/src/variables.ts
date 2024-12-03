@@ -1,7 +1,7 @@
 import {getLastUpdate} from './services/watermelon';
 
 // Casa
-export const BASE_URL = 'http://192.168.0.26:3000';
+export const BASE_URL = 'http://192.168.209.133:3000';
 
 // FATEC
 // export const BASE_URL = 'http://192.168.5.83:3000';

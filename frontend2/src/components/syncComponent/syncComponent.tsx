@@ -1,13 +1,12 @@
-// src/components/syncComponent/syncComponent.tsx
 import React, { useState } from 'react';
-import { View, Text, Button, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, ActivityIndicator, StyleSheet, ScrollView, RefreshControl } from 'react-native';
 import { mySync } from '../../services/watermelon';
 import { useAuth } from '../../context/AuthContext';
 
 const SyncComponent: React.FC = () => {
     const [isSyncing, setIsSyncing] = useState(false);
     const [syncError, setSyncError] = useState<string | null>(null);
-    const { userId } = useAuth()
+    const { userId } = useAuth();
 
     const handleSync = async () => {
         setIsSyncing(true);
@@ -15,9 +14,9 @@ const SyncComponent: React.FC = () => {
 
         try {
             if (!userId) {
-                return
+                return;
             }
-            await mySync(userId)
+            await mySync(userId);
             console.log('Sincronização concluída com sucesso!');
         } catch (error) {
             console.error('Erro durante a sincronização:', error);
@@ -28,27 +27,44 @@ const SyncComponent: React.FC = () => {
     };
 
     return (
-        <View style={styles.container}>
+        <ScrollView
+            contentContainerStyle={styles.container}
+            refreshControl={
+                <RefreshControl
+                    refreshing={isSyncing}
+                    onRefresh={handleSync}
+                    colors={["#007AFF"]} // Cor do indicador de carregamento
+                />
+            }
+        
+        >
             {isSyncing ? (
                 <ActivityIndicator size="large" color="#007AFF" />
             ) : (
-                <Button title="Sincronizar" onPress={handleSync} />
+                <Text style={styles.infoText}></Text>
             )}
             {syncError && <Text style={styles.errorText}>{syncError}</Text>}
-        </View>
+        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        marginTop: 20,
-        alignItems: 'center',
+        flexGrow: 1,
         justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20,
+        height: 2
     },
     errorText: {
-        marginTop: 10,
+        marginTop: 0,
         color: 'red',
         fontSize: 14,
+        textAlign: 'center',
+    },
+    infoText: {
+        fontSize: 1,
+        color: '#555',
         textAlign: 'center',
     },
 });
