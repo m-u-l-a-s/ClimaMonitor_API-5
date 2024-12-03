@@ -141,7 +141,7 @@ const MapScreen: React.FC<MapScreenProps> = ({
     <View style={{flex: 1}}>
       <MapView
         style={mapStyles.map}
-        initialRegion={{
+        region={{
           latitude: currentLocation.latitude,
           longitude: currentLocation.longitude,
           latitudeDelta: 0.01,

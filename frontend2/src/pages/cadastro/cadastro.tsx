@@ -1,8 +1,6 @@
-/* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable react-native/no-inline-styles */
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Text, TextInput, Button, Alert, ScrollView, View} from 'react-native';
-import Geolocation from '@react-native-community/geolocation';
 import {useAuth} from '../../context/AuthContext';
 import {useCultivoContext} from '../../context/CulturaContext';
 import {useNavigation} from '@react-navigation/native';
@@ -21,20 +19,6 @@ const Cadastro = () => {
   const [maxPluvi, setMaxPluvi] = useState('');
   const [minPluvi, setMinPluvi] = useState('');
   const navigation = useNavigation();
-
-  useEffect(() => {
-    Geolocation.getCurrentPosition(
-      position => {
-        const {latitude, longitude} = position.coords;
-        setLatitude(latitude.toString());
-        setLongitude(longitude.toString());
-      },
-      error => {
-        Alert.alert('Erro ao obter localização', error.message);
-      },
-      {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
-    );
-  }, []);
 
   const handleSubmit = async () => {
     if (

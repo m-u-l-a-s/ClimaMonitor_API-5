@@ -17,8 +17,8 @@ export const mapStyles = StyleSheet.create({
   infoText: {fontSize: 16, fontWeight: 'bold'},
   gpsButton: {
     position: 'absolute',
-    top: 100,
-    left: 60,
+    top: 10,
+    left: 10,
     backgroundColor: '#ffffff',
     padding: 10,
     borderRadius: 30,

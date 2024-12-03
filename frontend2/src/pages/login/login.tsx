@@ -30,6 +30,8 @@ export default function Login() {
     try {
       const canAuthenticate = await RNBiometrics.canAuthenticate();
 
+      console.log('canAuthenticate', canAuthenticate);
+
       if (!canAuthenticate) return;
       const response = await fetch(`${BASE_URL}/users/check-email`, {
         method: 'POST',
@@ -93,10 +95,14 @@ export default function Login() {
 
         const canBiometric = await RNBiometrics.canAuthenticate();
 
+        console.log('canBiometric', canBiometric);
+
         if (canBiometric) {
           const savedPreference = await AsyncStorage.getItem(
             'biometricPreference',
           );
+
+          console.log('savedPreference', savedPreference);
 
           if (savedPreference === null) {
             Alert.alert(
