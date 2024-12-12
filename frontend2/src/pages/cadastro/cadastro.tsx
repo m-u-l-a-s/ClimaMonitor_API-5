@@ -1,25 +1,26 @@
-// src/pages/cadastro/Cadastro.tsx
+/* eslint-disable react-native/no-inline-styles */
 import React, {useState} from 'react';
-import {Text, TextInput, Button, Alert, ScrollView} from 'react-native';
-import {Cultivo} from '../../@types/culturaDto';
-import {BASE_URL} from '../../variables';
-import {useCultivoContext} from '../../context/CulturaContext';
-import styles from './styles';
+import {Text, TextInput, Button, Alert, ScrollView, View} from 'react-native';
 import {useAuth} from '../../context/AuthContext';
 import {useNavigation} from '@react-navigation/native';
-import { mySync } from '../../services/watermelon';
+
+import {mySync} from '../../services/watermelon';
 
 function generateRandomId(): string {
   const idLength = 16; // Comprimento desejado do ID
-  return Array.from({ length: idLength }, () =>
-    Math.random().toString(36).charAt(2) // Pega um caractere aleatório
+  return Array.from(
+    {length: idLength},
+    () => Math.random().toString(36).charAt(2), // Pega um caractere aleatório
   ).join('');
 }
 
+import MapScreen from '../../components/map/mapScreen';
+import styles from './styles';
+import {BASE_URL} from '../../variables';
+import {Cultivo} from '../../@types/culturaDto';
 
 const Cadastro = () => {
   const {userId} = useAuth();
-  const {fetchCultivos} = useCultivoContext();
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
   const [nome_cultivo, setnome_cultivo] = useState('');
@@ -27,7 +28,6 @@ const Cadastro = () => {
   const [minTemp, setMinTemp] = useState('');
   const [maxPluvi, setMaxPluvi] = useState('');
   const [minPluvi, setMinPluvi] = useState('');
-
   const navigation = useNavigation();
 
   const handleSubmit = async () => {
@@ -52,33 +52,15 @@ const Cadastro = () => {
       temperatura_min: parseFloat(minTemp),
       pluviometria_max: parseFloat(maxPluvi),
       pluviometria_min: parseFloat(minPluvi),
-      pluviometrias: [],
-      temperaturas: [],
-      alertasPluvi: [],
-      alertasTemp: [],
+      userId: userId || '',
       createdAt: '',
       deletedAt: '',
-      lastUpdate: '',
-      userId: userId || '',
-      
     };
 
-    // try {
-    //   await createNewCultura(data);
-    //   Alert.alert('Cultura cadastrada com sucesso');
-    //   await mySync();
-    // } catch (error) {
-    //   Alert.alert('Erro ao cadastrar cultura');
-    //   console.error(error);
-    // }
-
-    console.log('dados enviados:', JSON.stringify(data));
     try {
       const response = await fetch(`${BASE_URL}/cultura`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(data),
       });
 
@@ -86,7 +68,7 @@ const Cadastro = () => {
         await response.json();
         Alert.alert('Success', 'Cadastro realizado com sucesso!');
 
-        mySync(userId || "")
+        mySync(userId || '');
         setLatitude('');
         setLongitude('');
         setnome_cultivo('');
@@ -94,19 +76,16 @@ const Cadastro = () => {
         setMinTemp('');
         setMaxPluvi('');
         setMinPluvi('');
-
         navigation.navigate('Home');
       } else {
         const error = await response.json();
-        console.error('Error response:', error);
         Alert.alert(
-          'Error',
+          'Erro',
           error.message || 'Ocorreu um erro ao submeter o formulário.',
         );
       }
     } catch (error) {
-      console.error('Fetch error:', error);
-      Alert.alert('Error', 'Não foi possível conectar com o backend.');
+      Alert.alert('Erro', 'Não foi possível conectar ao servidor.');
     }
   };
 
@@ -117,19 +96,30 @@ const Cadastro = () => {
       <Text style={styles.title}>Cadastro de Monitoramento</Text>
       <Text style={styles.subtitle}>Ponto de Monitoramento</Text>
 
+      <View style={{height: 300, marginBottom: 20}}>
+        <MapScreen
+          latitude={parseFloat(latitude) || undefined}
+          longitude={parseFloat(longitude) || undefined}
+          onSelectLocation={(lat, lng) => {
+            setLatitude(lat.toString());
+            setLongitude(lng.toString());
+          }}
+        />
+      </View>
+
       <Text style={styles.label}>Local</Text>
       <TextInput
         style={styles.input}
-        placeholder="Latitude (ex: '-23.5505')"
+        placeholder="Latitude"
         value={latitude}
-        onChangeText={setLatitude}
+        onChangeText={value => setLatitude(value)}
         keyboardType="numeric"
       />
       <TextInput
         style={styles.input}
-        placeholder="Longitude (ex: '-46.5505')"
+        placeholder="Longitude"
         value={longitude}
-        onChangeText={setLongitude}
+        onChangeText={value => setLongitude(value)}
         keyboardType="numeric"
       />
 
@@ -141,11 +131,6 @@ const Cadastro = () => {
         onChangeText={setnome_cultivo}
       />
 
-      <Text style={styles.alertsHeader}>Alertas</Text>
-
-      <Text style={styles.label}>Frequência de Análise de Temperatura</Text>
-      <Text style={styles.label}>Diariamente</Text>
-
       <Text style={styles.label}>Temperatura Máxima</Text>
       <TextInput
         style={styles.input}
@@ -154,7 +139,6 @@ const Cadastro = () => {
         onChangeText={setMaxTemp}
         keyboardType="numeric"
       />
-
       <Text style={styles.label}>Temperatura Mínima</Text>
       <TextInput
         style={styles.input}
@@ -164,10 +148,7 @@ const Cadastro = () => {
         keyboardType="numeric"
       />
 
-      <Text style={styles.label}>Frequência de Análise de Pluviometria</Text>
-      <Text style={styles.label}>Diariamente</Text>
-
-      <Text style={styles.label}>Pluviometria Máxima (mm)</Text>
+      <Text style={styles.label}>Pluviometria Máxima</Text>
       <TextInput
         style={styles.input}
         placeholder="Pluviometria máxima"
@@ -175,8 +156,7 @@ const Cadastro = () => {
         onChangeText={setMaxPluvi}
         keyboardType="numeric"
       />
-
-      <Text style={styles.label}>Pluviometria Mínima (mm)</Text>
+      <Text style={styles.label}>Pluviometria Mínima</Text>
       <TextInput
         style={styles.input}
         placeholder="Pluviometria mínima"

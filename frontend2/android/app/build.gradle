@@ -80,7 +80,7 @@ android {
 
     namespace "com.frontend2"
     defaultConfig {
-        applicationId "com.frontend2"
+        applicationId "com.Clima_Monitor"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

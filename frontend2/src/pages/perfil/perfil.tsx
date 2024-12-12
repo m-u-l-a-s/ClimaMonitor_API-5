@@ -7,6 +7,8 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   Platform,
+  View,
+  Switch,
 } from 'react-native';
 import {styles} from './styles';
 import {BASE_URL} from '../../variables';
@@ -16,6 +18,7 @@ import {useAuth} from '../../context/AuthContext';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {RootStackParamList} from '../../navigation/types';
 import {useNavigation} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type PerfilScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -32,17 +35,29 @@ const UserProfile = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(true);
   const [showConfirmPassword, setShowConfirmPassword] = useState(true);
-
+  const [biometricEnabled, setBiometricEnabled] = useState(false);
   const {userId, logout} = useAuth();
+
+  useEffect(() => {
+    const fetchBiometricPreference = async () => {
+      try {
+        const preference = await AsyncStorage.getItem('biometricPreference');
+        setBiometricEnabled(preference === 'true');
+      } catch (error) {
+        console.error('Erro ao carregar preferência de biometria:', error);
+      }
+    };
+
+    fetchBiometricPreference();
+  }, []);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
       if (userId) {
         try {
           const response = await fetch(`${BASE_URL}/users/${userId}`);
-          const data = await response.json();
 
-          console.log(data);
+          const data = await response.json();
 
           if (data.email) {
             setEmail(data.email);
@@ -63,6 +78,29 @@ const UserProfile = () => {
 
     fetchUserProfile();
   }, [userId]);
+
+  const toggleBiometricPreference = async () => {
+    try {
+      const newPreference = !biometricEnabled;
+      setBiometricEnabled(newPreference);
+      await AsyncStorage.setItem(
+        'biometricPreference',
+        newPreference.toString(),
+      );
+      Alert.alert(
+        'Sucesso',
+        newPreference
+          ? 'Biometria ativada com sucesso!'
+          : 'Biometria desativada com sucesso!',
+      );
+    } catch (error) {
+      console.error('Erro ao salvar preferência de biometria:', error);
+      Alert.alert(
+        'Erro',
+        'Não foi possível atualizar a preferência de biometria',
+      );
+    }
+  };
 
   const handleUpdateProfile = () => {
     if (password && !confirmPassword) {
@@ -172,6 +210,16 @@ const UserProfile = () => {
           secureTextEntry={showConfirmPassword}
           onIconRigthPress={() => setShowConfirmPassword(!showConfirmPassword)}
         />
+
+        <View style={styles.switchContainer}>
+          <Text style={styles.label}>Ativar Biometria</Text>
+          <Switch
+            value={biometricEnabled}
+            onValueChange={toggleBiometricPreference}
+            trackColor={{false: '#cccccc', true: '#007BFF'}}
+            thumbColor={biometricEnabled ? '#ffffff' : '#ffffff'}
+          />
+        </View>
 
         <TouchableOpacity style={styles.button} onPress={handleUpdateProfile}>
           <Text style={styles.buttonText}>Atualizar Perfil</Text>

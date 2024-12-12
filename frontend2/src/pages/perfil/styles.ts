@@ -51,4 +51,13 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
+  switchContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginVertical: 15,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+  },
 });
