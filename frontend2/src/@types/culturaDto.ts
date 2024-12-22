@@ -4,19 +4,19 @@ export interface PontoCultivo {
 }
 
 export interface Temperatura {
-  data: string;
+  data: Date;
   temperatura_media: number;
   temperatura_max: number;
   temperatura_min: number;
 }
 
 export interface Pluviometria {
-  data: string;
+  data: Date;
   pluviometria: number;
 }
 
 export interface Cultivo {
-  _id?: string
+  id: string
   ponto_cultivo: PontoCultivo;
   nome_cultivo: string;
   temperatura_max: number;
@@ -30,4 +30,5 @@ export interface Cultivo {
   lastUpdate?: string;
   createdAt: string;
   deletedAt: string;
+  userId: string;
 }

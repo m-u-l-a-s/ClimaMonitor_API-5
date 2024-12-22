@@ -1,54 +1,76 @@
-import React, { useState } from "react";
-import { TouchableHighlightProps, TouchableOpacity, Text, View, Modal } from 'react-native';
-import { style } from "./styles";
+/* eslint-disable react-native/no-inline-styles */
+import React, {useEffect, useState} from 'react';
+import {TouchableOpacity, Text, View, Modal, Alert} from 'react-native';
+import {style} from './styles';
+import {NavigationProp} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
-
-type Props = TouchableHighlightProps & {
-    text: string;
-}
-
+import {RootStackParamList} from '../../navigation/types';
+import {useAuth} from '../../context/AuthContext';
+import {BASE_URL} from '../../variables';
 
 export function Header() {
-    const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [name, setName] = useState('');
+  const {userId} = useAuth();
 
-    return (
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (userId) {
+        try {
+          const response = await fetch(`${BASE_URL}/users/${userId}`);
+          const data = await response.json();
 
-        <View style={style.container}>
-            <View style={style.usuario}>
-                <TouchableOpacity onPress={() => setModalVisible(true)}>
-                    <SimpleLineIcons name="user" style={{ fontSize: 30 }} />
-                </TouchableOpacity>
-                <Text style={style.texto} >Bem-vindo</Text>
-            </View>
+          console.log(data);
 
-            <Modal
-                animationType="slide"                transparent={true}
-                visible={modalVisible}
-                onRequestClose={() => setModalVisible(false)}
-            >
-                <View style={style.modalOverlay}>
-                    <View style={style.modalContent}>
+          if (data) {
+            setName(data.name);
+          } else {
+            Alert.alert(
+              'Erro',
+              'Não foi possível carregar os dados do usuário',
+            );
+          }
+        } catch (error) {
+          console.error(error);
+          Alert.alert('Erro', 'Erro ao carregar os dados do usuário');
+        }
+      }
+    };
 
-                        <TouchableOpacity > 
-                            <Text style={style.modalText}>Logout</Text>
-                        </TouchableOpacity>
+    fetchUserProfile();
+  }, [userId]);
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
-                        <TouchableOpacity onPress={() => setModalVisible(false)}>
-                            <Text style={style.closeButton}>Fechar</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </Modal>
+  return (
+    <View style={style.container}>
+      <View style={style.usuario}>
+        <Text style={style.texto}>Bem-vindo {name}</Text>
+      </View>
 
-            <View style={style.notificacao}>
-                <TouchableOpacity>
-                    <SimpleLineIcons name="bell" style={{ fontSize: 30 }} />
-                </TouchableOpacity>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}>
+        <View style={style.modalOverlay}>
+          <View style={style.modalContent}>
+            <TouchableOpacity>
+              <Text style={style.modalText}>Logout</Text>
+            </TouchableOpacity>
 
-            </View>
-
-
+            <TouchableOpacity onPress={() => setModalVisible(false)}>
+              <Text style={style.closeButton}>Fechar</Text>
+            </TouchableOpacity>
+          </View>
         </View>
+      </Modal>
 
-    )
+      <View style={style.notificacao}>
+        <TouchableOpacity onPress={() => navigation.navigate('Notificacao')}>
+          <SimpleLineIcons name="bell" style={{fontSize: 30}} />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
 }

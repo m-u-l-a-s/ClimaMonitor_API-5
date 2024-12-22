@@ -1,35 +1,33 @@
-import React from "react";
-import {Text, TouchableOpacity, View} from 'react-native';
-import { style } from "./styles";
-import { NavigationProp } from '@react-navigation/native';
-import  SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
-import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
+import React from 'react';
+import {TouchableOpacity, View} from 'react-native';
+import {style} from './styles';
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import {BottomTabBarProps} from '@react-navigation/bottom-tabs';
 
-
-
-
-
-type Props = {
-    navigation: NavigationProp<any>; 
+const CustomTabBar: React.FC<BottomTabBarProps> = ({navigation}) => {
+  const handleNovoCadastro = () => {
+    navigation.navigate('Cadastro');
   };
 
-  const CustomTabBar: React.FC<BottomTabBarProps> = ({navigation}) => {
-    const go = (screenName:string)=>{
-        navigation.navigate(screenName)
-    }
+  const go = (screenName: string) => {
+    navigation.navigate(screenName);
+  };
 
-    return(
-          <View style={style.tabArea}>
+  return (
+    <View style={style.tabArea}>
+      <TouchableOpacity onPress={() => go('Home')} style={style.tabButton}>
+        <SimpleLineIcons name="home" style={style.icon} />
+      </TouchableOpacity>
 
-            <TouchableOpacity onPress={()=>go('Home')}>
-                <SimpleLineIcons name="home" style={{fontSize:32}} />
-            </TouchableOpacity>
+      <TouchableOpacity onPress={handleNovoCadastro} style={style.tabButton}>
+        <SimpleLineIcons name="plus" style={style.icon} />
+      </TouchableOpacity>
 
-          </View>
-
-        
-
-    )
-}
+      <TouchableOpacity onPress={() => go('Profile')} style={style.tabButton}>
+        <SimpleLineIcons name="user" style={style.icon} />
+      </TouchableOpacity>
+    </View>
+  );
+};
 
 export default CustomTabBar;

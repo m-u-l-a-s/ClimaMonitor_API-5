@@ -1,17 +1,9 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {useState} from 'react';
-import {
-  View,
-  Text,
-  Image,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
+import {View, Text, Image, Alert, TouchableOpacity} from 'react-native';
 import {style} from './styles';
 import Logo from '../../assets/logo.png';
-import {themas} from '../../global/themes';
 import {InputLogin} from '../../components/InputLogin/inputLogin';
-import Octicons from 'react-native-vector-icons/Octicons';
 import {Button} from '../../components/Button/button';
 import {useNavigation, NavigationProp} from '@react-navigation/native';
 import {ScrollView} from 'react-native';
@@ -19,24 +11,24 @@ import {BASE_URL} from '../../variables';
 
 export default function CadastroUsuario() {
   const navigation = useNavigation<NavigationProp<any>>();
-  //const [nome, setNome] = useState('');
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
+  const [lastName, setlastName] = useState('');
   const [password, setPassword] = useState('');
 
   function getCadastrar() {
     try {
-      // Verifica se os campos estão preenchidos
-      if (!username || !password) {
+      if (!email || !name || !lastName || !password) {
         return Alert.alert('Atenção', 'Preencha todos os campos obrigatórios!');
       }
 
-      // Cria um objeto com os dados do cadastro
       const data = {
-        username: username,
-        password: password,
+        email,
+        name,
+        lastName,
+        password,
       };
 
-      // Faz a requisição POST para o backend
       fetch(`${BASE_URL}/users`, {
         method: 'POST',
         headers: {
@@ -46,13 +38,16 @@ export default function CadastroUsuario() {
       })
         .then(response => {
           if (response.status === 201) {
-            setUsername('');
+            setEmail('');
+            setName('');
+            setlastName('');
             setPassword('');
             Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
-            // navigation.reset({routes: [{name: 'BottomRoutes'}]});
+            navigation.reset({routes: [{name: 'Login'}]});
           } else {
-            // Exibe mensagem de erro caso algo dê errado
-            setUsername('');
+            setEmail('');
+            setName('');
+            setlastName('');
             setPassword('');
             Alert.alert('Erro', 'Falha ao realizar o cadastro');
           }
@@ -70,7 +65,9 @@ export default function CadastroUsuario() {
   }
 
   return (
-    <ScrollView>
+    <ScrollView
+      contentContainerStyle={{flexGrow: 1}}
+      keyboardShouldPersistTaps="handled">
       <View style={style.container}>
         <View style={style.boxTop}>
           <Text style={style.text}>Cadastre-se</Text>
@@ -79,23 +76,38 @@ export default function CadastroUsuario() {
         </View>
 
         <View style={style.boxMid}>
-          {/* <InputLogin value={nome} onChangeText={setNome} title="Nome" /> */}
-
           <InputLogin
-            placeholder="Usuário"
-            value={username}
-            onChangeText={setUsername}
+            placeholder="Nome"
+            value={name}
+            onChangeText={setName}
+            title="Nome"
+          />
+          <InputLogin
+            placeholder="Sobrenome"
+            value={lastName}
+            onChangeText={setlastName}
+            title="Sobrenome"
+          />
+          <InputLogin
+            placeholder="E-mail"
+            value={email}
+            onChangeText={setEmail}
             title="E-mail"
           />
-
           <InputLogin
             placeholder="Senha"
             value={password}
             onChangeText={setPassword}
             title="Senha"
           />
+          <Button text="Cadastrar" onPress={getCadastrar} />
+        </View>
 
-          <Button text="Cadastrar" onPress={getCadastrar}></Button>
+        <View style={style.textoRodape}>
+          <Text style={style.textBottom}>Já tem um cadastro?</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+            <Text style={{color: '#007BFF', fontSize: 18}}> Clique aqui!</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </ScrollView>

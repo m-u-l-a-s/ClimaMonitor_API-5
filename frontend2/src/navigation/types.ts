@@ -1,13 +1,21 @@
-import { Cultivo } from "../@types/culturaDto";
+import {Cultivo, Pluviometria, Temperatura} from '../@types/culturaDto';
+import CulturasModel from '../models/Cultura';
 
-// src/navigation/types.ts
 export type RootStackParamList = {
-    Home: undefined;
-    Cadastro: undefined;
-    CadastroUsuario: undefined;
-    Dashboard: {
-      cultura: Cultivo
+  Login: undefined;
+  CadastroUsuario: undefined;
+  BottomRoutes: undefined;
+  Home: undefined;
+  Dashboard: {
+    cultura: CulturasModel;
   };
-    // Adicionar outras telas aqui
+  Cadastro: undefined;
+  Profile: undefined;
+  Notificacao: undefined;
+  Relatorio:{
+    cultura: CulturasModel;
   };
-  
+  EditarCultura: {
+    cultura: CulturasModel
+  };
+};

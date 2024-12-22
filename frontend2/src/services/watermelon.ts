@@ -1,130 +1,340 @@
-import { synchronize } from '@nozbe/watermelondb/sync'
-import { Collection, Model, Q } from "@nozbe/watermelondb";
-import { Cultivo, Pluviometria, Temperatura } from "../@types/culturaDto";
-import { database } from "../database"
-import CulturaModel from "../models/Cultura";
+import { synchronize } from '@nozbe/watermelondb/sync';
+import { Collection, Model, Q } from '@nozbe/watermelondb';
+import { Cultivo, Pluviometria, Temperatura } from '../@types/culturaDto';
+import { database } from '../database';
+import CulturaModel, { Cultura } from '../models/Cultura';
+// import { BASE_URL, getTimeStamp } from '../variables';
 import { BASE_URL, getTimeStamp } from '../variables';
 import { formatInTimeZone } from 'date-fns-tz';
-import axios, { Axios } from "axios"
+import axios, { all } from 'axios';
+import { NotificacaoType } from '../@types/notificacaoDto';
+import TemperaturaModel from '../models/Temperatura';
+import PluviometriaModel from '../models/Pluviometria';
 import * as moment from 'moment';
-import { parseISO } from 'date-fns';
-import CulturasModel from '../models/Cultura';
+import { take } from '@nozbe/watermelondb/QueryDescription';
 
 
 export const getCulturas = async (): Promise<Collection<CulturaModel>> => {
-    return await database.get("Cultura")
-}
+  return database.get('cultura');
+};
 
 export const findOneCultura = async (id: string): Promise<CulturaModel> => {
-    return (await getCulturas()).find(id);
+  return (await (await getCulturas()).query(Q.where("id", id))).slice(-1)[0]
+};
+
+export const findAllCulturaById = async (userId: string): Promise<CulturaModel[]> => {
+  const cultura = await getCulturas();
+  const allCulturas = await cultura.query(Q.where("user_id", userId))
+  return allCulturas;
+};
+
+export const findAllTemperaturasById = async (idCultura: string): Promise<Temperatura[]> => {
+  const temperaturaT: Collection<TemperaturaModel> = database.get("temperatura")
+  const temperaturas: Temperatura[] = []
+  const temperaturaQ = (await temperaturaT.query(Q.where("id_cultura", idCultura))).sort((a, b) => new Date(a.data).getTime() - new Date(b.data).getTime());
+
+  temperaturaQ.map(temp => {
+    temperaturas.push({
+      data: new Date(temp.data),
+      temperatura_max: temp.temperatura_max,
+      temperatura_min: temp.temperatura_min,
+      temperatura_media: temp.temperatura_media,
+    })
+  })
+
+  return temperaturas
 }
 
-export const findAllCultura = async (): Promise<CulturaModel[]> => {
-    const cultura = await getCulturas()
-    const allCulturas = await cultura.query().fetch()
-    return allCulturas
+export const findAllPluviometriasById = async (idCultura: string): Promise<Pluviometria[]> => {
+  const pluviometriaT: Collection<PluviometriaModel> = database.get("pluviometria")
+  const pluviometrias: Pluviometria[] = []
+  const pluviometriaQ = (await pluviometriaT.query(Q.where("id_cultura", idCultura))).sort((a, b) => new Date(a.data).getTime() - new Date(b.data).getTime())
+
+  pluviometriaQ.map(pluvi => {
+    pluviometrias.push({
+      data: new Date(pluvi.data),
+      pluviometria: pluvi.pluviometria
+    })
+  })
+
+
+  return pluviometrias
+}
+
+export const PullCreateCultura = async (culturas: PullCultura[]) => {
+  culturas.forEach(async culturaDto => {
+    try {
+      await database.write(async () => {
+        const culturaCollection = database.get<CulturaModel>('cultura');
+        const time = formatInTimeZone(
+          new Date(),
+          'America/Sao_Paulo',
+          "yyyy-MM-dd'T'HH:mm:ssXXX",
+        );
+        await culturaCollection.create(cultura => {
+          cultura.id_cultura = cultura.id_cultura;
+          cultura.latitude = culturaDto.latitude;
+          cultura.longitude = culturaDto.longitude
+          cultura.nome_cultivo = culturaDto.nome_cultivo;
+          cultura.temperatura_max = culturaDto.temperatura_max;
+          cultura.pluviometria_max = culturaDto.pluviometria_max;
+          cultura.temperatura_min = culturaDto.temperatura_min;
+          cultura.pluviometria_min = culturaDto.pluviometria_min;
+          cultura.lastUpdate = culturaDto.last_update_mongo;
+          cultura.createdAt = culturaDto.created_at_mongo;
+          cultura.deletedAt = '';
+          cultura.userId = culturaDto.user_id;
+        });
+      });
+    } catch (error) {
+      console.error('Erro ao criar cultura:', error);
+    }
+  })
 }
 
 export const createNewCultura = async (culturaDto: Cultivo) => {
-    try {
-        await database.write(async () => {
-            const culturaCollection = database.get<CulturaModel>('Cultura');
-            const time = formatInTimeZone(new Date(), 'America/Sao_Paulo', "yyyy-MM-dd'T'HH:mm:ssXXX")
-            await culturaCollection.create(cultura => {
-                cultura._id = "";
-                cultura.ponto_cultivo = culturaDto.ponto_cultivo;
-                cultura.nome_cultivo = culturaDto.nome_cultivo;
-                cultura.temperatura_max = culturaDto.temperatura_max;
-                cultura.pluviometria_max = culturaDto.pluviometria_max;
-                cultura.temperatura_min = culturaDto.temperatura_min;
-                cultura.pluviometria_min = culturaDto.pluviometria_min;
-                cultura.temperaturas = culturaDto.temperaturas;
-                cultura.pluviometrias = culturaDto.pluviometrias;
-                cultura.alertasTemp = culturaDto.alertasTemp;
-                cultura.alertasPluvi = culturaDto.alertasPluvi;
-                cultura.lastUpdate = time;
-                cultura.createdAt = time;
-                cultura.deletedAt = "";
-            });
-        });
-    } catch (error) {
-        console.error('Erro ao criar cultura:', error);
-    }
+  try {
+    await database.write(async () => {
+      const culturaCollection = database.get<CulturaModel>('cultura');
+      const time = formatInTimeZone(
+        new Date(),
+        'America/Sao_Paulo',
+        "yyyy-MM-dd'T'HH:mm:ssXXX",
+      );
+      await culturaCollection.create(cultura => {
+        cultura.id_cultura = '';
+        cultura.latitude = culturaDto.ponto_cultivo.latitude;
+        cultura.longitude = culturaDto.ponto_cultivo.longitude
+        cultura.nome_cultivo = culturaDto.nome_cultivo;
+        cultura.temperatura_max = culturaDto.temperatura_max;
+        cultura.pluviometria_max = culturaDto.pluviometria_max;
+        cultura.temperatura_min = culturaDto.temperatura_min;
+        cultura.pluviometria_min = culturaDto.pluviometria_min;
+        cultura.lastUpdate = time;
+        cultura.createdAt = time;
+        cultura.deletedAt = '';
+      });
+    });
+  } catch (error) {
+    console.error('Erro ao criar cultura:', error);
+  }
+};
+
+export const updateCultura = async (culturaDto: Cultura) => {
+  const cultivo = await findOneCultura(culturaDto.id);
+  const time = formatInTimeZone(
+    new Date(),
+    'America/Sao_Paulo',
+    "yyyy-MM-dd'T'HH:mm:ssXXX",
+  );
+
+  console.log(cultivo)
+
+  await database.write(async () => {
+    await cultivo.update(updatedCultura => {
+      (updatedCultura.latitude = culturaDto.latitude),
+        (updatedCultura.longitude = culturaDto.longitude),
+        (updatedCultura.nome_cultivo = culturaDto.nome_cultivo),
+        (updatedCultura.temperatura_max = culturaDto.temperatura_max),
+        (updatedCultura.temperatura_min = culturaDto.temperatura_min),
+        (updatedCultura.pluviometria_max = culturaDto.pluviometria_max),
+        (updatedCultura.pluviometria_min = culturaDto.pluviometria_min),
+        (updatedCultura.lastUpdate = time)
+    }).then(async resp => {
+      console.log("Cultura atualizada:")
+      console.log(resp)
+    });
+  });
+};
+
+export interface PullCultura {
+  id_cultura: string; // UUID representando o identificador único da cultura
+  nome_cultivo: string; // Nome do cultivo
+  latitude: string; // Latitude da localização
+  longitude: string; // Longitude da localização
+  temperatura_max: number; // Temperatura máxima permitida
+  temperatura_min: number; // Temperatura mínima permitida
+  pluviometria_max: number; // Pluviometria máxima permitida
+  pluviometria_min: number; // Pluviometria mínima permitida
+  last_update_mongo: string; // Data e hora da última atualização no MongoDB
+  created_at_mongo: string; // Data e hora da criação no MongoDB
+  deleted_at_mongo: string | null; // Data e hora da exclusão no MongoDB (ou null se não foi excluído)
+  user_id: string; // Identificador único do usuário
+  id: number; // ID numérico único
 }
 
-export const updateCultura = async (culturaDto: Cultivo, id: string) => {
-    const cultivo = await findOneCultura(id)
-    const time = formatInTimeZone(new Date(), 'America/Sao_Paulo', "yyyy-MM-dd'T'HH:mm:ssXXX")
+export const pullUpdateCultura = async (culturasDto: PullCultura[]) => {
+  culturasDto.forEach(async culturaDto => {
+    const collection: Collection<CulturaModel> = await getCulturas()
+
+    const cultivo = (await collection.query(Q.where("id_cultura", culturaDto.id_cultura), take(1))).slice(-1)
+
+    const time = formatInTimeZone(
+      new Date(),
+      'America/Sao_Paulo',
+      "yyyy-MM-dd'T'HH:mm:ssXXX",
+    );
 
     await database.write(async () => {
-        await cultivo.update(updateCultura => {
-            updateCultura.ponto_cultivo = culturaDto.ponto_cultivo,
-                updateCultura.nome_cultivo = culturaDto.nome_cultivo,
-                updateCultura.temperatura_max = culturaDto.temperatura_max,
-                updateCultura.temperatura_min = culturaDto.temperatura_min,
-                updateCultura.pluviometria_max = culturaDto.pluviometria_max,
-                updateCultura.pluviometria_min = culturaDto.pluviometria_min,
-                updateCultura.pluviometrias = culturaDto.pluviometrias,
-                updateCultura.lastUpdate = time,
-                updateCultura.alertasPluvi = culturaDto.alertasPluvi,
-                updateCultura.alertasTemp = culturaDto.alertasTemp
-        })
-    })
+      await cultivo[0].update(updateCultura => {
+        (updateCultura.latitude = culturaDto.latitude),
+          (updateCultura.longitude = culturaDto.longitude),
+          (updateCultura.nome_cultivo = culturaDto.nome_cultivo),
+          (updateCultura.temperatura_max = culturaDto.temperatura_max),
+          (updateCultura.temperatura_min = culturaDto.temperatura_min),
+          (updateCultura.pluviometria_max = culturaDto.pluviometria_max),
+          (updateCultura.pluviometria_min = culturaDto.pluviometria_min),
+          (updateCultura.lastUpdate = culturaDto.last_update_mongo)
+      }).then(async resp => {
+        console.log("Cultura atualizada:")
+        console.log(resp)
+        mySync(culturaDto.user_id)
+      });
+    });
+  })
 }
 
 export const deleteCultura = async (id: string) => {
-    const cultura = await findOneCultura(id)
-    await database.write(async () => {
-        await cultura.markAsDeleted();
-        await cultura.destroyPermanently();
-    })
+  const cultura = await findOneCultura(id);
+  await database.write(async () => {
+    await cultura.markAsDeleted();
+  });
+};
+
+export async function getLastUpdate(userId: string): Promise<CulturaModel[]> {
+  const cultura = await getCulturas();
+  const lastUpdate = await cultura
+    .query(
+      Q.where("user_id", userId)
+    );
+  lastUpdate.sort((a, b) => new Date(a.lastUpdate).getTime() - new Date(b.lastUpdate).getTime()).slice(-1)
+  return lastUpdate;
 }
 
-export async function deleteAllData() {
-    const culturas = await findAllCultura()
-    await database.write(async () => {
-        culturas.map(async cultura => {
-            await cultura.markAsDeleted();
-            await cultura.destroyPermanently();
-        })
-    })
-}
+// export async function getAlertasDoDia(userId : string) {
+//   const notificacoes: NotificacaoType[] = [];
+//   const data = new Date();
+//   data.setDate(data.getDay()-1)
 
-export async function getLastUpdate(): Promise<CulturaModel[]> {
-    const cultura = await getCulturas()
-    const lastUpdate = await cultura.query(Q.sortBy("lastUpdate",Q.desc), Q.take(1), ).fetch()
-    return lastUpdate
-}
+//   const ontem = formatInTimeZone(data, 'America/Sao_Paulo', 'yyyy-MM-dd');
 
+//   console.log(ontem);
 
-export async function mySync() {
-    await synchronize({
-        database,
-        pullChanges: async ({ lastPulledAt }) => {
+//   const culturas = await findAllCulturaById(userId);
 
-            console.log(`${BASE_URL}/cultura/sync${await getTimeStamp()}`)
+//   for (const cultura of culturas) {
+//     let descTemp = '';
+//     let descPluvi = '';
+//     if (cultura.alertasPluvi == undefined) {
+//       console.log('alerta pluviometria undefined');
+//     }
+//     else if (cultura.alertasPluvi.length != 0){
+//       const alertaPluviometria = cultura.alertasPluvi.at(-1);
 
-            const response = await fetch(`${BASE_URL}/cultura/sync${await getTimeStamp()}`)
-            console.log(response)
+//         console.log("último alerta de pluviometria: "+alertaPluviometria?.data)
 
-            if (!response.ok) {
-                throw new Error(await response.text())
-            }
+//       if (alertaPluviometria?.data == ontem) {
+//         if (cultura.pluviometria_max < alertaPluviometria.pluviometria) {
+//           descPluvi = `A pluviometria excedeu a máxima de ${cultura.pluviometria_max}mm.`;
+//         }
 
-            const { changes, timestamp } = await response.json()
+//         if (cultura.pluviometria_min > alertaPluviometria.pluviometria) {
+//           descPluvi = `A pluviometria ficou abaixo do limite mínimo de ${cultura.pluviometria_min}mm.`;
+//         }
+//       }
+//     }
 
-            return { changes, timestamp }
+//     if (cultura.alertasTemp == undefined) {
+//       console.log('alerta temperatura undefined');
+//     }
+//     else if (cultura.alertasTemp.length != 0){
+//       const alertaTemperatura = cultura.alertasTemp.at(-1);
+
+//       console.log('Ultimo alerta de temperatura: ' + alertaTemperatura?.data);
+
+//       if (alertaTemperatura?.data == ontem) {
+//         if (cultura.temperatura_max < alertaTemperatura.temperatura_max) {
+//           descPluvi = `A temperatura excedeu a máxima de ${cultura.temperatura_max}°C.`;
+//         }
+
+//         if (cultura.temperatura_min > alertaTemperatura.temperatura_min) {
+//           descPluvi = `A temperatura ficou abaixo do limite mínimo de ${cultura.temperatura_min}°C.`;
+//         }
+//       }
+//     }
+//     if (descPluvi == '' && descTemp == '') {
+//       continue;
+//     } else {
+//       notificacoes.push({
+//         nome_cultivo: cultura.nome_cultivo,
+//         descPluviometria: descPluvi,
+//         descTemperatura: descTemp,
+//       });
+//     }
+//   }
+
+//   return notificacoes;
+// }
+
+// const findLastUpdates = async (userId: string) => {
+//   const lastUpdate = await getLastUpdate(userId)
+//   const lastUpdateDate = new Date(lastUpdate[0].lastUpdate)
+
+//   const cultura = await getCulturas();
+//   const allCulturas = await cultura.query(Q.where("user_id", userId))
+
+//   const filteredCulturas = allCulturas.map(cul => new Date(cul.createdAt))
+// }
+
+export async function mySync(userId: string) {
+  await synchronize({
+    database,
+    pushChanges: async ({ changes }) => {
+      const lastUpdate = await getLastUpdate(userId)  
+      const data = {
+        changes: {
+          cultura: changes.cultura
         },
+        timestamp: changes.timestamp
+      }
+      console.log(data)
+  
+      console.log("\n\n\n\n")
+      console.log(changes["cultura"].deleted)
+  
+      // console.log(moment.unix(lastPulledAt).toDate())
+      const response = await axios.post(
+        `${BASE_URL}/cultura/sync`,
+        data
+      );
+  
+      console.log(`resposta: ${response}`);
+    },
+    pullChanges: async ({lastPulledAt}) => {
+      console.log(`${BASE_URL}/cultura/sync/${userId}/${await getTimeStamp(userId)}`);
 
-        pushChanges: async ({ changes, lastPulledAt }) => {
-            const response = await axios.post(`${BASE_URL}/cultura/sync?${lastPulledAt}`, changes)
+      let req = ``
+      if (lastPulledAt) {
+        req = `?lastPulledAt=${lastPulledAt}`
+      }
 
-            console.log(`resposta: ${response}`)
+      const response = await fetch(
+        `${BASE_URL}/cultura/sync/${userId}/${req}`,
+      );
 
-            if (!(response.status == 200)) {
-                throw new Error(await response.data)
-            }
-        },
-        migrationsEnabledAtVersion: 1,
-    })
+      if (!response.ok) {
+        throw new Error(await response.text());
+      }
+
+      const { changes, timestamp } = await response.json();
+
+      if (!changes || !timestamp) {
+        throw new Error('Invalid data returned from server');
+      }
+
+      return { changes, timestamp };
+    },
+    migrationsEnabledAtVersion: 1,
+  });
+
 }
